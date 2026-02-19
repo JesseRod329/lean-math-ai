@@ -180,9 +180,10 @@ success "🎉 Hourly automation complete!"
 log "Next run: $(date -v+1H '+%H:%M')"
 log "Dashboard: http://localhost:8765"
 
-# Auto-commit to git (optional - uncomment to enable)
-# if [ -d .git ]; then
-#     git add proofs/ daily-reports/ completed-proofs/ dashboard/data/
-#     git diff --cached --quiet || git commit -m "auto: $(date '+%H:%M') - $processed_count proofs"
-#     git push origin main 2>/dev/null || true
-# fi
+# Auto-commit to git
+cd "$PROJECT_DIR"
+if [ -d .git ]; then
+    git add proofs/ daily-reports/ completed-proofs/ dashboard/data/ 2>/dev/null
+    git diff --cached --quiet || git commit -m "auto: $(date '+%H:%M') - hourly update"
+    git push origin main 2>/dev/null || warning "Git push failed (no network?)"
+fi
