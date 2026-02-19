@@ -29,6 +29,11 @@ success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1" | tee -a "$LOG_DIR/nightly-$DATE.log"
 }
 
+warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_DIR/nightly-$DATE.log"
+}
+
+export PATH="$HOME/.elan/bin:$PATH"
 cd "$PROJECT_DIR"
 
 log "🌙 Starting Nightly Mathematics Automation Loop"
@@ -49,7 +54,11 @@ log ""
 log "═══════════════════════════════════════════════════"
 log "PHASE 2: Candidate Identification (12:00 AM)"
 log "═══════════════════════════════════════════════════"
-python3 scripts/extract-theorems.py --input papers/papers-$DATE.json --output target-theorems/candidates-$DATE.json --max-candidates 10
+python3 scripts/extract-theorems.py \
+    --input papers/papers-$DATE.json \
+    --output target-theorems/candidates-$DATE.json \
+    --max-candidates 10 \
+    --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit
 candidates=$(jq '.candidates | length' target-theorems/candidates-$DATE.json 2>/dev/null || echo "0")
 log "Identified $candidates theorem candidates"
 
@@ -61,34 +70,65 @@ log "═════════════════════════
 
 mkdir -p proofs/$DATE
 
-# Process each candidate
-jq -c '.candidates[]' target-theorems/candidates-$DATE.json 2>/dev/null | while read -r candidate; do
+# Track counts
+proven_count=0
+formalized_count=0
+failed_count=0
+template_count=0
+trivial_count=0
+
+# Process each candidate (use process substitution to avoid subshell)
+while read -r candidate; do
     theorem_id=$(echo "$candidate" | jq -r '.id')
     theorem_name=$(echo "$candidate" | jq -r '.name')
-    
+
     log "Processing: $theorem_name ($theorem_id)"
-    
-    # Generate Lean formalization
-    python3 scripts/llm-formalize.py \
+
+    # Generate Lean formalization with v2 script
+    python3 scripts/llm-formalize-v2.py \
         --candidate "$candidate" \
         --output proofs/$DATE/${theorem_id}.lean \
+        --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit \
         --attempts 3
-    
+
     if [ -f "proofs/$DATE/${theorem_id}.lean" ]; then
-        # Verify with Lean
+        # Verify with Lean (individual file check)
         log "Verifying $theorem_id with Lean..."
-        
-        cd "$MATHAI_DIR"
-        if lake build 2>&1 | grep -q "Build completed"; then
-            success "✓ $theorem_name formalized and verified"
-            echo "$candidate" | jq '. + {"status": "proven", "date": "'$DATE'"}' >> ../completed-proofs/proven-$DATE.jsonl
-        else
-            error "✗ $theorem_name failed verification"
-            echo "$candidate" | jq '. + {"status": "failed", "date": "'$DATE'"}' >> ../failed-attempts/failed-$DATE.jsonl
-        fi
-        cd "$PROJECT_DIR"
+
+        VERIFY_OUTPUT=$(bash scripts/verify-proof.sh "proofs/$DATE/${theorem_id}.lean" 2>&1)
+        VERIFY_EXIT=$?
+
+        case $VERIFY_EXIT in
+            0)
+                success "PROVEN: $theorem_name (compiles, no sorry!)"
+                echo "$candidate" | jq '. + {"status": "proven", "date": "'"$DATE"'"}' >> completed-proofs/proven-$DATE.jsonl
+                ((proven_count++)) || true
+                ;;
+            1)
+                success "FORMALIZED: $theorem_name (compiles with sorry)"
+                echo "$candidate" | jq '. + {"status": "formalized", "date": "'"$DATE"'"}' >> completed-proofs/formalized-$DATE.jsonl
+                ((formalized_count++)) || true
+                ;;
+            2)
+                error "FAILED: $theorem_name (does not compile)"
+                echo "$candidate" | jq '. + {"status": "failed", "date": "'"$DATE"'"}' >> failed-attempts/failed-$DATE.jsonl
+                ((failed_count++)) || true
+                ;;
+            4)
+                warning "TEMPLATE: $theorem_name (LLM fallback)"
+                echo "$candidate" | jq '. + {"status": "template", "date": "'"$DATE"'"}' >> failed-attempts/templates-$DATE.jsonl
+                ((template_count++)) || true
+                ;;
+            5)
+                warning "TRIVIAL: $theorem_name (True := by, not real math)"
+                echo "$candidate" | jq '. + {"status": "trivial", "date": "'"$DATE"'"}' >> failed-attempts/trivial-$DATE.jsonl
+                ((trivial_count++)) || true
+                ;;
+        esac
+
+        log "  $VERIFY_OUTPUT"
     fi
-done
+done < <(jq -c '.candidates[]' target-theorems/candidates-$DATE.json 2>/dev/null)
 
 # Phase 4: Documentation (5:00 AM)
 log ""
@@ -108,12 +148,12 @@ log "═════════════════════════
 log "PHASE 5: Nightly Summary"
 log "═══════════════════════════════════════════════════"
 
-PROVEN_COUNT=$(wc -l < completed-proofs/proven-$DATE.jsonl 2>/dev/null || echo "0")
-FAILED_COUNT=$(wc -l < failed-attempts/failed-$DATE.jsonl 2>/dev/null || echo "0")
-
 log "Session Complete!"
-log "Theorems proven: $PROVEN_COUNT"
-log "Attempts failed: $FAILED_COUNT"
+log "  Proven (no sorry):    $proven_count"
+log "  Formalized (sorry):   $formalized_count"
+log "  Failed (bad syntax):  $failed_count"
+log "  Templates (fallback): $template_count"
+log "  Trivial (True):       $trivial_count"
 log "Report: daily-reports/report-$DATE.md"
 
 success "🌅 Nightly loop complete. Review the report in the morning!"

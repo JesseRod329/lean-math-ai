@@ -53,139 +53,219 @@ Respond ONLY with the JSON. No markdown, no explanation."""
 
 def extract_theorems_from_paper(paper, model=None, tokenizer=None):
     """Use LLM to extract formalizable theorems from a paper"""
-    
-    prompt = THEOREM_EXTRACTION_PROMPT.format(
+
+    prompt_text = THEOREM_EXTRACTION_PROMPT.format(
         title=paper.get('title', ''),
-        summary=paper.get('summary', '')[:2000]  # Limit summary length
+        summary=paper.get('summary', '')[:2000]
     )
-    
-    if MLX_AVAILABLE and model is not None:
-        # Use local MLX model
-        response = generate(
-            model,
-            tokenizer,
-            prompt=prompt,
-            max_tokens=2048,
-            temp=0.3
-        )
+
+    if MLX_AVAILABLE and model is not None and tokenizer is not None:
+        try:
+            # Use chat template for instruct models
+            messages = [
+                {"role": "system", "content": "You are a mathematics formalization expert. Respond only with valid JSON."},
+                {"role": "user", "content": prompt_text}
+            ]
+            formatted_prompt = tokenizer.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+
+            response = generate(
+                model,
+                tokenizer,
+                prompt=formatted_prompt,
+                max_tokens=2048
+            )
+        except Exception as e:
+            print(f"  LLM generation failed: {e}")
+            return simulate_extraction(paper)
     else:
-        # Fallback: simulate extraction with regex (for testing)
         return simulate_extraction(paper)
-    
+
     # Parse JSON response
     try:
-        # Extract JSON from response (handle markdown code blocks)
+        # Try to extract JSON from response (handle markdown code blocks)
         json_match = re.search(r'```json\s*(\{.*?\})\s*```', response, re.DOTALL)
         if json_match:
             response = json_match.group(1)
-        
+        else:
+            # Strip everything before first { and after last }
+            first_brace = response.find('{')
+            last_brace = response.rfind('}')
+            if first_brace != -1 and last_brace != -1:
+                response = response[first_brace:last_brace + 1]
+
+        # Fix LaTeX escapes that break JSON parsing (\textbf, \in, etc.)
+        response = re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', response)
         result = json.loads(response)
-        
-        # Add paper metadata
+
+        # Add paper metadata and abstract to each candidate
+        abstract_excerpt = paper.get('summary', '')[:1500]
         for candidate in result.get('candidates', []):
             candidate['source_paper'] = {
                 'id': paper.get('id'),
                 'title': paper.get('title'),
-                'authors': paper.get('authors', [])[:3],  # First 3 authors
+                'authors': paper.get('authors', [])[:3],
                 'categories': paper.get('categories', [])
             }
-            candidate['id'] = f"{paper.get('id', 'unknown')}_{hash(candidate['name']) % 10000}"
-        
+            candidate['abstract_excerpt'] = abstract_excerpt
+            # Generate stable ID from name
+            safe_name = re.sub(r'[^a-zA-Z0-9]', '_', candidate.get('name', 'unknown'))[:30]
+            candidate['id'] = f"{paper.get('id', 'unknown')}_{safe_name}"
+
         return result.get('candidates', [])
-        
+
     except json.JSONDecodeError as e:
-        print(f"Failed to parse LLM response: {e}")
-        return []
+        print(f"  Failed to parse LLM response: {e}")
+        print(f"  Raw response: {response[:200]}...")
+        return simulate_extraction(paper)
 
 def simulate_extraction(paper):
-    """Simulate theorem extraction for testing without LLM"""
-    # Simple heuristic extraction for testing
+    """Improved fallback: extract theorem-indicator sentences from abstract"""
     candidates = []
-    
-    title = paper.get('title', '').lower()
-    summary = paper.get('summary', '').lower()
-    
-    # Pattern matching for common theorem types
-    if 'prime' in title or 'prime' in summary:
+
+    title = paper.get('title', '')
+    summary = paper.get('summary', '')
+    abstract_excerpt = summary[:1500]
+
+    # Find sentences containing theorem-indicator words
+    sentences = re.split(r'(?<=[.!?])\s+', summary)
+    theorem_sentences = [s.strip() for s in sentences
+                         if any(w in s.lower() for w in
+                                ['prove', 'show', 'establish', 'theorem',
+                                 'result', 'bound', 'inequality', 'conjecture',
+                                 'characterize', 'classify', 'determine'])]
+
+    # Pick the best statement (first theorem-indicator sentence, or title-based)
+    if theorem_sentences:
+        statement = theorem_sentences[0]
+    else:
+        statement = f"Main result from: {title}"
+
+    # Detect domain from title and abstract
+    text_lower = (title + ' ' + summary).lower()
+
+    if 'prime' in text_lower or 'divisor' in text_lower or 'arithmetic' in text_lower:
         candidates.append({
-            "name": f"Prime-related result from {paper.get('id', 'unknown')}",
-            "statement": "A property about prime numbers mentioned in the paper",
-            "objects": ["prime numbers", "integers"],
+            "name": f"Number theory: {title[:60]}",
+            "statement": statement,
+            "objects": ["prime numbers", "integers", "arithmetic functions"],
             "difficulty": "Medium",
             "value": "Extends number theory library",
-            "formalization_hints": "Use Nat.Prime and related lemmas",
+            "formalization_hints": "Use Nat.Prime and related lemmas from mathlib4",
             "source_paper": {
                 "id": paper.get('id'),
-                "title": paper.get('title'),
+                "title": title,
                 "authors": paper.get('authors', [])[:3],
                 "categories": paper.get('categories', [])
             },
-            "id": f"{paper.get('id', 'unknown')}_prime"
+            "abstract_excerpt": abstract_excerpt,
+            "id": f"{paper.get('id', 'unknown')}_nt"
         })
-    
-    if 'graph' in title or 'graph' in summary:
+
+    if 'graph' in text_lower or 'vertex' in text_lower or 'edge' in text_lower:
         candidates.append({
-            "name": f"Graph theory result from {paper.get('id', 'unknown')}",
-            "statement": "A property of graphs mentioned in the paper",
+            "name": f"Graph theory: {title[:60]}",
+            "statement": statement,
             "objects": ["graphs", "vertices", "edges"],
             "difficulty": "Medium",
             "value": "Extends graph theory library",
             "formalization_hints": "Use SimpleGraph from mathlib4",
             "source_paper": {
                 "id": paper.get('id'),
-                "title": paper.get('title'),
+                "title": title,
                 "authors": paper.get('authors', [])[:3],
                 "categories": paper.get('categories', [])
             },
+            "abstract_excerpt": abstract_excerpt,
             "id": f"{paper.get('id', 'unknown')}_graph"
         })
-    
+
+    if 'combinat' in text_lower or 'partition' in text_lower or 'permutation' in text_lower:
+        candidates.append({
+            "name": f"Combinatorics: {title[:60]}",
+            "statement": statement,
+            "objects": ["finite sets", "combinatorial structures"],
+            "difficulty": "Medium",
+            "value": "Extends combinatorics library",
+            "formalization_hints": "Use Finset and Fintype from mathlib4",
+            "source_paper": {
+                "id": paper.get('id'),
+                "title": title,
+                "authors": paper.get('authors', [])[:3],
+                "categories": paper.get('categories', [])
+            },
+            "abstract_excerpt": abstract_excerpt,
+            "id": f"{paper.get('id', 'unknown')}_comb"
+        })
+
+    # If nothing matched, still create a candidate with the paper's actual content
+    if not candidates:
+        candidates.append({
+            "name": f"Result: {title[:60]}",
+            "statement": statement,
+            "objects": ["mathematical structures"],
+            "difficulty": "Hard",
+            "value": "Novel formalization",
+            "formalization_hints": "Requires careful analysis of paper",
+            "source_paper": {
+                "id": paper.get('id'),
+                "title": title,
+                "authors": paper.get('authors', [])[:3],
+                "categories": paper.get('categories', [])
+            },
+            "abstract_excerpt": abstract_excerpt,
+            "id": f"{paper.get('id', 'unknown')}_result"
+        })
+
     return candidates
 
 def main():
     parser = argparse.ArgumentParser(description="Extract formalizable theorems from papers")
     parser.add_argument("--input", required=True, help="Input JSON file with papers")
     parser.add_argument("--output", required=True, help="Output JSON file for candidates")
-    parser.add_argument("--max-candidates", type=int, default=10, 
+    parser.add_argument("--max-candidates", type=int, default=10,
                        help="Maximum candidates to extract")
-    parser.add_argument("--model", default="mlx-community/Qwen2.5-7B-Instruct-4bit",
+    parser.add_argument("--model", default="mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit",
                        help="MLX model to use for extraction")
-    
+    parser.add_argument("--skip-llm", action="store_true",
+                       help="Skip LLM and use heuristic extraction only")
+
     args = parser.parse_args()
-    
+
     # Load papers
     with open(args.input, 'r') as f:
         data = json.load(f)
-    
+
     papers = data.get('papers', [])
     print(f"Processing {len(papers)} papers...")
-    
-    # Load model if available
+
+    # Load model if available and not skipped
     model = None
     tokenizer = None
-    if MLX_AVAILABLE:
+    if MLX_AVAILABLE and not args.skip_llm:
         print(f"Loading model: {args.model}")
         try:
             model, tokenizer = load(args.model)
             print("✓ Model loaded")
         except Exception as e:
             print(f"Failed to load model: {e}")
-            print("Falling back to simulation mode")
-    
+            print("Falling back to heuristic mode")
+
     # Extract theorems from each paper
     all_candidates = []
     for i, paper in enumerate(papers):
         print(f"Processing paper {i+1}/{len(papers)}: {paper.get('id', 'unknown')}")
-        
+
         candidates = extract_theorems_from_paper(paper, model, tokenizer)
         all_candidates.extend(candidates)
-        
+
         if len(all_candidates) >= args.max_candidates:
             break
-    
+
     # Limit candidates
     all_candidates = all_candidates[:args.max_candidates]
-    
+
     # Save results
     output = {
         "extraction_date": data.get('fetch_date'),
@@ -193,10 +273,10 @@ def main():
         "candidates_found": len(all_candidates),
         "candidates": all_candidates
     }
-    
+
     with open(args.output, 'w') as f:
         json.dump(output, f, indent=2)
-    
+
     print(f"✓ Extracted {len(all_candidates)} candidates to {args.output}")
 
 if __name__ == "__main__":

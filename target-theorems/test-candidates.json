@@ -1,0 +1,85 @@
+{
+  "extraction_date": "2026-02-19T12:59:55.090788",
+  "total_papers": 50,
+  "candidates_found": 3,
+  "candidates": [
+    {
+      "name": "Theorem 1: Existence of 3 Disjoint Correspondence Colorings",
+      "statement": "For every $K_5$-minor-free graph $G$ and every correspondence 6-cover $\textbf{M}$ of $G$, there exist 3 pairwise disjoint $\textbf{M}$-colorings $\\varphi_1, \\varphi_2, \\varphi_3$ of $G$.",
+      "objects": [
+        "$K_5$-minor-free graph",
+        "correspondence 6-cover",
+        "$\textbf{M}$-colorings"
+      ],
+      "difficulty": "Medium",
+      "value": "This theorem formalizes the construction of 3 disjoint correspondence colorings for a specific type of graph, which is a direct application of the definition provided in the text.",
+      "formalization_hints": "You can use the `color` module in mathlib4 for defining colorings and the `graph` module for handling graphs. Define the correspondence cover and use combinatorial arguments to ensure disjoint colorings.",
+      "source_paper": {
+        "id": "2602.16692v1",
+        "title": "Disjoint Correspondence Colorings for $K_5$-Minor-free Graphs",
+        "authors": [
+          "Wouter Cames van Batenburg",
+          "Daniel W. Cranston",
+          "Franti\u0161ek Kardo\u0161"
+        ],
+        "categories": [
+          "math.CO"
+        ]
+      },
+      "abstract_excerpt": "Thomassen famously proved that every planar graph is 5-choosable. We explore variants of this result, focusing on finding disjoint correspondence colorings, in the more general class of $K_5$-minor-free graphs. Correspondence colorings generalize list colorings as follows. Given a graph $G$ and a positive integer $t$, a correspondence $t$-cover $\\textbf{M}$ assigns to each $v\\in V(G)$ a set of allowable colors $\\{1_v,\\ldots,t_v\\}$ and to each edge $vw\\in E(G)$ a matching between $\\{1_v,\\ldots,t_v\\}$ and $\\{1_w,\\ldots,t_w\\}$. An $\\textbf{M}$-coloring $\\varphi$ picks for each vertex $v$ a color $\\varphi(v)$ (from the set $\\{1_v,\\ldots,t_v\\}$) such that for each edge $vw\\in E(G)$ the colors $\\varphi(v),\\varphi(w)$ are not matched to each other. Two $\\textbf{M}$-colorings $\\varphi_1,\\varphi_2$ of $G$ are called disjoint if $\\varphi_1(v)\\ne\\varphi_2(v)$ for all $v\\in V(G)$. For every $K_5$-minor-free graph $G$ and every correspondence 6-cover $\\textbf{M}$ of $G$, we construct 3 pairwise disjoint $\\textbf{M}$-colorings $\\varphi_1,\\varphi_2,\\varphi_3$. In contrast, we provide examples of $K_5$-minor-free graphs and correspondence 5-covers $\\textbf{M}$ that do not admit 3 disjoint $\\textbf{M}$-colorings.",
+      "id": "2602.16692v1_Theorem_1__Existence_of_3_Disj"
+    },
+    {
+      "name": "Theorem 2: Non-existence of 3 Disjoint Correspondence Colorings",
+      "statement": "We provide examples of $K_5$-minor-free graphs and correspondence 5-covers $\textbf{M}$ that do not admit 3 disjoint $\textbf{M}$-colorings.",
+      "objects": [
+        "$K_5$-minor-free graph",
+        "correspondence 5-cover",
+        "$\textbf{M}$-colorings"
+      ],
+      "difficulty": "Medium",
+      "value": "This theorem formalizes the negation of the previous theorem, demonstrating that not all $K_5$-minor-free graphs with a specific correspondence cover can be 3-colored disjointly.",
+      "formalization_hints": "You can use counterexample constructions to show the non-existence of 3 disjoint colorings. Define the correspondence cover and use combinatorial arguments to prove the non-existence.",
+      "source_paper": {
+        "id": "2602.16692v1",
+        "title": "Disjoint Correspondence Colorings for $K_5$-Minor-free Graphs",
+        "authors": [
+          "Wouter Cames van Batenburg",
+          "Daniel W. Cranston",
+          "Franti\u0161ek Kardo\u0161"
+        ],
+        "categories": [
+          "math.CO"
+        ]
+      },
+      "abstract_excerpt": "Thomassen famously proved that every planar graph is 5-choosable. We explore variants of this result, focusing on finding disjoint correspondence colorings, in the more general class of $K_5$-minor-free graphs. Correspondence colorings generalize list colorings as follows. Given a graph $G$ and a positive integer $t$, a correspondence $t$-cover $\\textbf{M}$ assigns to each $v\\in V(G)$ a set of allowable colors $\\{1_v,\\ldots,t_v\\}$ and to each edge $vw\\in E(G)$ a matching between $\\{1_v,\\ldots,t_v\\}$ and $\\{1_w,\\ldots,t_w\\}$. An $\\textbf{M}$-coloring $\\varphi$ picks for each vertex $v$ a color $\\varphi(v)$ (from the set $\\{1_v,\\ldots,t_v\\}$) such that for each edge $vw\\in E(G)$ the colors $\\varphi(v),\\varphi(w)$ are not matched to each other. Two $\\textbf{M}$-colorings $\\varphi_1,\\varphi_2$ of $G$ are called disjoint if $\\varphi_1(v)\\ne\\varphi_2(v)$ for all $v\\in V(G)$. For every $K_5$-minor-free graph $G$ and every correspondence 6-cover $\\textbf{M}$ of $G$, we construct 3 pairwise disjoint $\\textbf{M}$-colorings $\\varphi_1,\\varphi_2,\\varphi_3$. In contrast, we provide examples of $K_5$-minor-free graphs and correspondence 5-covers $\\textbf{M}$ that do not admit 3 disjoint $\\textbf{M}$-colorings.",
+      "id": "2602.16692v1_Theorem_2__Non_existence_of_3_"
+    },
+    {
+      "name": "Comparability of random permutations in the strong Bruhat order",
+      "statement": "Given two random permutations, there exists a sequence of adjacent transpositions that each increase the number of inversions by 1, making the permutations comparable in the Bruhat order.",
+      "objects": [
+        "permutations",
+        "transpositions",
+        "inversions",
+        "Bruhat order"
+      ],
+      "difficulty": "Medium",
+      "value": "Formalizing this theorem would help in understanding the probabilistic properties of permutations under the strong Bruhat order, which has applications in combinatorics and probability theory.",
+      "formalization_hints": "You can use the concept of permutations and transpositions from mathlib4, along with the definition of Bruhat order. Define the probability space and the events where permutations are comparable.",
+      "source_paper": {
+        "id": "2602.16625v1",
+        "title": "Comparability of random permutations in the strong Bruhat order",
+        "authors": [
+          "Nicholas Christo",
+          "Marcus Michelen"
+        ],
+        "categories": [
+          "math.CO"
+        ]
+      },
+      "abstract_excerpt": "The (strong) Bruhat order for permutations provides a partial ordering defined as follows: two permutations are comparable if one can be obtained from the other by a sequence of adjacent transpositions that each increase the number of inversions by $1$. Given two random permutations, what is the probability that they are comparable in the Bruhat order? This problem was first considered in a 2006 work of Hammett and Pittel, which showed an exponential lower bound and a polynomial upper bound. The lower bound was very recently improved to the subexponential bound of $\\exp(-n^{1/2 + o(1)})$ by Boretsky, Cornejo, Hodges, Horn, Lesnevich, and McAllister. Hammett and Pittel predicted that the probability should decrease polynomially. We show that the probability decreases faster than any polynomial and is on the order of $\\exp(-\u0398(\\log^2 n))$.",
+      "id": "2602.16625v1_Comparability_of_random_permut"
+    }
+  ]
+}

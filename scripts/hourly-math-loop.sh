@@ -11,6 +11,7 @@ HOUR=$(date +%H:%M)
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 cd "$PROJECT_DIR"
+export PATH="$HOME/.elan/bin:$PATH"
 
 # Colors
 RED='\033[0;31m'
@@ -68,7 +69,11 @@ log "═════════════════════════
 if [ -f "target-theorems/candidates-$DATE.json" ]; then
     warning "Candidates already extracted today, checking for unprocessed..."
 else
-    python3 scripts/extract-theorems.py --input papers/papers-$DATE.json --output target-theorems/candidates-$DATE.json --max-candidates 10
+    python3 scripts/extract-theorems.py \
+        --input papers/papers-$DATE.json \
+        --output target-theorems/candidates-$DATE.json \
+        --max-candidates 10 \
+        --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit
 fi
 
 CANDIDATES_FILE="target-theorems/candidates-$DATE.json"
@@ -81,55 +86,67 @@ log "═════════════════════════
 log "PHASE 3: Hourly Formalization (1-2 candidates)"
 log "═══════════════════════════════════════════════════"
 
-# Find candidates not yet processed
+# Track counts (use process substitution to avoid subshell variable scope)
 processed_count=0
 max_per_hour=2
 
-jq -c '.candidates[]' $CANDIDATES_FILE 2>/dev/null | while read -r candidate; do
+while read -r candidate; do
     theorem_id=$(echo "$candidate" | jq -r '.id')
     theorem_name=$(echo "$candidate" | jq -r '.name')
-    
-    # Check if already processed today
+
+    # Check if already processed today (search all subdirs)
     if find proofs/$DATE -name "${theorem_id}.lean" -type f 2>/dev/null | grep -q .; then
         continue
     fi
-    
+
     if [ "$processed_count" -ge "$max_per_hour" ]; then
         log "Reached hourly limit ($max_per_hour), stopping..."
         break
     fi
-    
+
     log "Processing: $theorem_name ($theorem_id)"
-    
-    # Generate Lean formalization with improved v2 script
+
+    # Generate Lean formalization with v2 script
     python3 scripts/llm-formalize-v2.py \
         --candidate "$candidate" \
         --output "$RUN_DIR/${theorem_id}.lean" \
         --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit \
         --attempts 2
-    
+
     if [ -f "$RUN_DIR/${theorem_id}.lean" ]; then
-        # Verify with Lean
+        # Verify with Lean (individual file check)
         log "Verifying $theorem_id with Lean..."
-        
-        source "$HOME/.elan/env"
-        cd MathAI
-        
-        # Copy proof to MathAI for verification
-        cp "$RUN_DIR/${theorem_id}.lean" "MathAI/${theorem_id}.lean"
-        
-        if lake build 2>&1 | grep -q "Build completed"; then
-            success "✓ $theorem_name formalized and verified"
-            echo "$candidate" | jq '. + {"status": "proven", "date": "'$DATE'", "hour": "'$HOUR'"}' >> ../completed-proofs/proven-$DATE.jsonl
-            ((processed_count++))
-        else
-            error "✗ $theorem_name failed verification"
-            echo "$candidate" | jq '. + {"status": "failed", "date": "'$DATE'", "hour": "'$HOUR'"}' >> ../failed-attempts/failed-$DATE.jsonl
-        fi
-        
-        cd "$PROJECT_DIR"
+
+        VERIFY_OUTPUT=$(bash scripts/verify-proof.sh "$RUN_DIR/${theorem_id}.lean" 2>&1)
+        VERIFY_EXIT=$?
+
+        case $VERIFY_EXIT in
+            0)
+                success "PROVEN: $theorem_name"
+                echo "$candidate" | jq '. + {"status": "proven", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> completed-proofs/proven-$DATE.jsonl
+                ;;
+            1)
+                success "FORMALIZED: $theorem_name (compiles with sorry)"
+                echo "$candidate" | jq '. + {"status": "formalized", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> completed-proofs/formalized-$DATE.jsonl
+                ;;
+            2)
+                error "FAILED: $theorem_name (does not compile)"
+                echo "$candidate" | jq '. + {"status": "failed", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/failed-$DATE.jsonl
+                ;;
+            4)
+                warning "TEMPLATE: $theorem_name (LLM fallback)"
+                echo "$candidate" | jq '. + {"status": "template", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/templates-$DATE.jsonl
+                ;;
+            5)
+                warning "TRIVIAL: $theorem_name (True := by)"
+                echo "$candidate" | jq '. + {"status": "trivial", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/trivial-$DATE.jsonl
+                ;;
+        esac
+
+        log "  $VERIFY_OUTPUT"
+        ((processed_count++)) || true
     fi
-done
+done < <(jq -c '.candidates[]' $CANDIDATES_FILE 2>/dev/null)
 
 # Phase 4: Update Dashboard
 log ""
@@ -150,7 +167,7 @@ cat > "$REPORT_FILE" << EOF
 
 ## Files Generated
 \`\`\`
-$(ls -1 $RUN_DIR/)
+$(ls -1 $RUN_DIR/ 2>/dev/null || echo "none")
 \`\`\`
 
 ## Next Run
@@ -159,7 +176,19 @@ EOF
 
 success "✓ Hourly report: $REPORT_FILE"
 
-# Update dashboard data (optional - create a JSON for the dashboard)
+# Count each status for dashboard
+proven_today=$(cat completed-proofs/proven-$DATE.jsonl 2>/dev/null | python3 -c "import sys,json; d=json.JSONDecoder(); c=sys.stdin.read(); i=0; n=0
+while i<len(c.strip()):
+ try: _,i2=d.raw_decode(c,i); n+=1; j=c.find('{',i2); i=j if j!=-1 else len(c)
+ except: break
+print(n)" 2>/dev/null || echo "0")
+formalized_today=$(cat completed-proofs/formalized-$DATE.jsonl 2>/dev/null | python3 -c "import sys,json; d=json.JSONDecoder(); c=sys.stdin.read(); i=0; n=0
+while i<len(c.strip()):
+ try: _,i2=d.raw_decode(c,i); n+=1; j=c.find('{',i2); i=j if j!=-1 else len(c)
+ except: break
+print(n)" 2>/dev/null || echo "0")
+
+# Update dashboard data
 DASHBOARD_DATA="dashboard/data/latest.json"
 mkdir -p "dashboard/data"
 cat > "$DASHBOARD_DATA" << EOF
@@ -170,7 +199,8 @@ cat > "$DASHBOARD_DATA" << EOF
   "papers": $PAPER_COUNT,
   "candidates": $candidates,
   "processed_this_hour": $processed_count,
-  "total_proven_today": $(wc -l < completed-proofs/proven-$DATE.jsonl 2>/dev/null || echo "0"),
+  "proven_today": $proven_today,
+  "formalized_today": $formalized_today,
   "status": "running"
 }
 EOF
@@ -183,7 +213,7 @@ log "Dashboard: http://localhost:8765"
 # Auto-commit to git
 cd "$PROJECT_DIR"
 if [ -d .git ]; then
-    git add proofs/ daily-reports/ completed-proofs/ dashboard/data/ 2>/dev/null
-    git diff --cached --quiet || git commit -m "auto: $(date '+%H:%M') - hourly update"
+    git add proofs/ daily-reports/ completed-proofs/ failed-attempts/ dashboard/data/ 2>/dev/null
+    git diff --cached --quiet || git commit -m "auto: $(date '+%H:%M') - $processed_count processed (proven:$proven_today formalized:$formalized_today)"
     git push origin main 2>/dev/null || warning "Git push failed (no network?)"
 fi
