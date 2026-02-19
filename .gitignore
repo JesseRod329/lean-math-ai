@@ -1,0 +1,27 @@
+# Lean artifacts
+MathAI/.lake/
+MathAI/build/
+MathAI/.git/
+*.olean
+.lake/
+
+# Cache
+.cache/
+
+# Logs
+logs/*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# Node (if any)
+node_modules/
+
+# Keep directory structure
+!logs/.gitkeep

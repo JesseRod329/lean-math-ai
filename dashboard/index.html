@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌙 Lean Math AI Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(100,150,255,0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #8892b0;
+            font-size: 1.1em;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(100,150,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .card h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #64ffda;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: #8892b0;
+            font-size: 0.95em;
+        }
+        
+        .metric-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .metric-value.success { color: #64ffda; }
+        .metric-value.warning { color: #feca57; }
+        .metric-value.error { color: #ff6b6b; }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-active { background: #64ffda; box-shadow: 0 0 10px #64ffda; }
+        .status-pending { background: #feca57; box-shadow: 0 0 10px #feca57; }
+        .status-error { background: #ff6b6b; box-shadow: 0 0 10px #ff6b6b; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #64ffda);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        #canvas-container {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .theorem-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .theorem-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border-left: 3px solid #64ffda;
+            transition: all 0.3s;
+        }
+        
+        .theorem-item:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateX(5px);
+        }
+        
+        .theorem-id {
+            font-family: monospace;
+            color: #feca57;
+            font-size: 0.9em;
+        }
+        
+        .theorem-name {
+            color: #fff;
+            margin-top: 5px;
+        }
+        
+        .theorem-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            margin-top: 8px;
+        }
+        
+        .status-proven { background: rgba(100,255,218,0.2); color: #64ffda; }
+        .status-pending { background: rgba(254,202,87,0.2); color: #feca57; }
+        .status-failed { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-top: 15px;
+        }
+        
+        .phase-timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .phase-timeline::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #64ffda, #ff9ff3);
+        }
+        
+        .phase {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .phase-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #64ffda;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.2em;
+        }
+        
+        .phase-time {
+            font-size: 0.8em;
+            color: #8892b0;
+        }
+        
+        .phase-name {
+            font-size: 0.85em;
+            color: #fff;
+            margin-top: 5px;
+        }
+        
+        .log-output {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #a8b2d1;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 0;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+        }
+        
+        .log-entry.success { border-left-color: #64ffda; color: #64ffda; }
+        .log-entry.error { border-left-color: #ff6b6b; color: #ff6b6b; }
+        .log-entry.info { border-left-color: #48dbfb; color: #48dbfb; }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100,150,255,0.3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100,150,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌙 Lean Math AI Dashboard</h1>
+        <p>Autonomous Formal Mathematics Research System</p>
+    </div>
+    
+    <div class="dashboard">
+        <!-- System Status Card -->
+        <div class="card">
+            <h2><span class="status-indicator status-active"></span>System Status</h2>
+            <div class="metric">
+                <span class="metric-label">Lean 4 Version</span>
+                <span class="metric-value success">v4.16.0 ✓</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Mathlib4</span>
+                <span class="metric-value success">Installed ✓</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">LLM Backend</span>
+                <span class="metric-value warning">MLX (Local)</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Last Run</span>
+                <span class="metric-value" id="last-run">2026-02-19 12:38</span>
+            </div>
+        </div>
+        
+        <!-- Progress Overview -->
+        <div class="card">
+            <h2>📊 Tonight's Progress</h2>
+            <div class="metric">
+                <span class="metric-label">Papers Downloaded</span>
+                <span class="metric-value success">50</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%"></div>
+            </div>
+            <div class="metric" style="margin-top: 15px;">
+                <span class="metric-label">Theorems Identified</span>
+                <span class="metric-value success">10</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%"></div>
+            </div>
+            <div class="metric" style="margin-top: 15px;">
+                <span class="metric-label">Proofs Generated</span>
+                <span class="metric-value warning">1</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 10%"></div>
+            </div>
+            <div class="metric" style="margin-top: 15px;">
+                <span class="metric-label">Proofs Verified</span>
+                <span class="metric-value error">0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- 3D Visualization -->
+        <div class="card">
+            <h2>🎲 Mathematical Universe</h2>
+            <div id="canvas-container"></div>
+        </div>
+        
+        <!-- Phase Timeline -->
+        <div class="card">
+            <h2>⏰ Nightly Automation Timeline</h2>
+            <div class="phase-timeline">
+                <div class="phase">
+                    <div class="phase-dot">📥</div>
+                    <div class="phase-time">11:00 PM</div>
+                    <div class="phase-name">Paper Ingest</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot">🔍</div>
+                    <div class="phase-time">12:00 AM</div>
+                    <div class="phase-name">Theorem ID</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot">✍️</div>
+                    <div class="phase-time">1-3 AM</div>
+                    <div class="phase-name">Formalize</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot">✓</div>
+                    <div class="phase-time">3-5 AM</div>
+                    <div class="phase-name">Verify</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot">📊</div>
+                    <div class="phase-time">5:00 AM</div>
+                    <div class="phase-name">Report</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Theorem Candidates -->
+        <div class="card">
+            <h2>🎯 Theorem Candidates</h2>
+            <div class="theorem-list" id="theorem-list">
+                <div class="theorem-item">
+                    <div class="theorem-id">2602.16692v1_graph</div>
+                    <div class="theorem-name">Graph Theory Result</div>
+                    <span class="theorem-status status-pending">Generated</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics Chart -->
+        <div class="card">
+            <h2>📈 Historical Performance</h2>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Live Log -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2>📝 Live System Log</h2>
+            <div class="log-output" id="log-output">
+                <div class="log-entry success">[12:38:34] ✓ Saved 50 papers to papers/papers-2026-02-19.json</div>
+                <div class="log-entry success">[12:38:37] ✓ Downloaded 5 papers</div>
+                <div class="log-entry success">[12:38:37] ✓ Extracted 10 candidates to target-theorems/candidates-2026-02-19.json</div>
+                <div class="log-entry info">[12:38:37] Warning: mlx_lm not available</div>
+                <div class="log-entry info">[12:38:37] Processing: Graph theory result from 2602.16692v1</div>
+                <div class="log-entry success">[12:38:37] ✓ Generated proofs/2026-02-19/2602.16692v1_graph.lean</div>
+                <div class="log-entry error">[12:38:37] ✗ Error: MathAI directory not found - needs setup</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 3D Visualization with Three.js
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+        
+        // Create particles representing theorems
+        const geometry = new THREE.BufferGeometry();
+        const particleCount = 100;
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+            
+            // Color gradient from red to cyan
+            colors[i * 3] = Math.random();
+            colors[i * 3 + 1] = Math.random() * 0.8 + 0.2;
+            colors[i * 3 + 2] = 1;
+        }
+        
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        
+        const material = new THREE.PointsMaterial({
+            size: 0.1,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        
+        // Add wireframe cube
+        const cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
+        const cubeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x64ffda,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.3
+        });
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        scene.add(cube);
+        
+        camera.position.z = 8;
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            particles.rotation.x += 0.001;
+            particles.rotation.y += 0.002;
+            cube.rotation.x += 0.005;
+            cube.rotation.y += 0.005;
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+        
+        // Chart.js for performance metrics
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+                datasets: [{
+                    label: 'Papers Downloaded',
+                    data: [45, 52, 38, 61, 55, 48, 50],
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: 'Theorems Identified',
+                    data: [8, 12, 6, 15, 11, 9, 10],
+                    borderColor: '#feca57',
+                    backgroundColor: 'rgba(254, 202, 87, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: 'Proofs Verified',
+                    data: [0, 1, 0, 2, 1, 1, 0],
+                    borderColor: '#64ffda',
+                    backgroundColor: 'rgba(100, 255, 218, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#e0e0ff' }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: { color: '#8892b0' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    x: {
+                        ticks: { color: '#8892b0' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            }
+        });
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

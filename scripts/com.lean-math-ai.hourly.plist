@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.lean-math-ai.hourly</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/Jesse/clawd/lean-math-ai/scripts/hourly-math-loop.sh</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/Jesse/clawd/lean-math-ai</string>
+    
+    <key>StartInterval</key>
+    <!-- Run every 3600 seconds (1 hour) -->
+    <integer>3600</integer>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>/Users/Jesse/clawd/lean-math-ai/logs/hourly-launchd.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/Jesse/clawd/lean-math-ai/logs/hourly-launchd-error.log</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/jesse/.elan/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>

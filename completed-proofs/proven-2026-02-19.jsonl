@@ -1,0 +1,273 @@
+{
+  "name": "Graph theory result from 2602.16692v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16692v1",
+    "title": "Disjoint Correspondence Colorings for $K_5$-Minor-free Graphs",
+    "authors": [
+      "Wouter Cames van Batenburg",
+      "Daniel W. Cranston",
+      "František Kardoš"
+    ],
+    "categories": [
+      "math.CO"
+    ]
+  },
+  "id": "2602.16692v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Graph theory result from 2602.16605v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16605v1",
+    "title": "Fast Shortest Path in Graphs With Sparse Signed Tree Models and Applications",
+    "authors": [
+      "Édouard Bonnet",
+      "Colin Geniet",
+      "Eun Jung Kim"
+    ],
+    "categories": [
+      "cs.DS",
+      "cs.DM",
+      "math.CO"
+    ]
+  },
+  "id": "2602.16605v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Graph theory result from 2602.16333v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16333v1",
+    "title": "Long cycles in vertex transitive digraphs",
+    "authors": [
+      "Matija Bucić",
+      "Kevin Hendrey",
+      "Bojan Mohar"
+    ],
+    "categories": [
+      "math.CO"
+    ]
+  },
+  "id": "2602.16333v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Graph theory result from 2602.16319v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16319v1",
+    "title": "One-factorizations of complete multipartite graphs with distance constraints",
+    "authors": [
+      "Yuli Tan",
+      "Junling Zhou",
+      "Tuvi Etzion"
+    ],
+    "categories": [
+      "math.CO"
+    ]
+  },
+  "id": "2602.16319v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Graph theory result from 2602.16300v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16300v1",
+    "title": "Randomized Zero Forcing",
+    "authors": [
+      "Jesse Geneson",
+      "Illya Hicks",
+      "Noah Lichtenberg"
+    ],
+    "categories": [
+      "math.CO",
+      "cs.DM"
+    ]
+  },
+  "id": "2602.16300v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Graph theory result from 2602.16272v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16272v1",
+    "title": "Nordhaus-Gaddum inequalities for the number of 1-nearly independent vertex subsets",
+    "authors": [
+      "Eric O. D. Andriantiana",
+      "Zekhaya B. Shozi"
+    ],
+    "categories": [
+      "math.CO"
+    ]
+  },
+  "id": "2602.16272v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Graph theory result from 2602.16225v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16225v1",
+    "title": "Six-dimensional GKM manifolds with four fixed points",
+    "authors": [
+      "Donghoon Jang",
+      "Shintaro Kuroki",
+      "Mikiya Masuda"
+    ],
+    "categories": [
+      "math.GT",
+      "math.AT",
+      "math.CO",
+      "math.DG"
+    ]
+  },
+  "id": "2602.16225v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Graph theory result from 2602.16184v1",
+  "statement": "A property of graphs mentioned in the paper",
+  "objects": [
+    "graphs",
+    "vertices",
+    "edges"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends graph theory library",
+  "formalization_hints": "Use SimpleGraph from mathlib4",
+  "source_paper": {
+    "id": "2602.16184v1",
+    "title": "On Toric Ideals Arising from the Chip-Firing Game",
+    "authors": [
+      "Rahul Karki"
+    ],
+    "categories": [
+      "math.AC",
+      "math.AG",
+      "math.CO",
+      "math.RA"
+    ]
+  },
+  "id": "2602.16184v1_graph",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Prime-related result from 2602.16027v1",
+  "statement": "A property about prime numbers mentioned in the paper",
+  "objects": [
+    "prime numbers",
+    "integers"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends number theory library",
+  "formalization_hints": "Use Nat.Prime and related lemmas",
+  "source_paper": {
+    "id": "2602.16027v1",
+    "title": "On the Mean Value of a Weighted Composite Arithmetic Function",
+    "authors": [
+      "Mihoub Bouderbala"
+    ],
+    "categories": [
+      "math.NT"
+    ]
+  },
+  "id": "2602.16027v1_prime",
+  "status": "proven",
+  "date": "2026-02-19"
+}
+{
+  "name": "Prime-related result from 2602.15797v1",
+  "statement": "A property about prime numbers mentioned in the paper",
+  "objects": [
+    "prime numbers",
+    "integers"
+  ],
+  "difficulty": "Medium",
+  "value": "Extends number theory library",
+  "formalization_hints": "Use Nat.Prime and related lemmas",
+  "source_paper": {
+    "id": "2602.15797v1",
+    "title": "On Graham's rearrangement conjecture",
+    "authors": [
+      "Huy Tuan Pham",
+      "Lisa Sauermann"
+    ],
+    "categories": [
+      "math.CO",
+      "cs.DM",
+      "math.NT"
+    ]
+  },
+  "id": "2602.15797v1_prime",
+  "status": "proven",
+  "date": "2026-02-19"
+}
