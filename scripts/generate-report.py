@@ -8,11 +8,27 @@ import argparse
 import json
 from datetime import datetime
 
-def count_lines(filepath):
-    """Count lines in a file"""
+def count_records(filepath):
+    """Count JSON records in a multi-line JSONL file"""
     try:
         with open(filepath, 'r') as f:
-            return sum(1 for _ in f)
+            content = f.read().strip()
+        if not content:
+            return 0
+        decoder = json.JSONDecoder()
+        idx = 0
+        count = 0
+        while idx < len(content):
+            try:
+                _, end = decoder.raw_decode(content, idx)
+                count += 1
+                next_brace = content.find('{', end)
+                if next_brace == -1:
+                    break
+                idx = next_brace
+            except json.JSONDecodeError:
+                break
+        return count
     except FileNotFoundError:
         return 0
 
@@ -20,8 +36,8 @@ def generate_report(date, output_file):
     """Generate markdown report for the day"""
     
     # Count results
-    proven_count = count_lines(f"completed-proofs/proven-{date}.jsonl")
-    failed_count = count_lines(f"failed-attempts/failed-{date}.jsonl")
+    proven_count = count_records(f"completed-proofs/proven-{date}.jsonl")
+    failed_count = count_records(f"failed-attempts/failed-{date}.jsonl")
     
     # Read candidates
     try:
