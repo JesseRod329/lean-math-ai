@@ -130,6 +130,17 @@ while read -r candidate; do
     fi
 done < <(jq -c '.candidates[]' target-theorems/candidates-$DATE.json 2>/dev/null)
 
+# Phase 3.5: Refinement Pass (retry failed proofs with compiler feedback)
+log ""
+log "═══════════════════════════════════════════════════"
+log "PHASE 3.5: Refinement Pass (4:00 AM)"
+log "═══════════════════════════════════════════════════"
+
+python3 scripts/refine-failed-proofs.py \
+    --date $DATE \
+    --max-attempts 2 \
+    --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit
+
 # Phase 4: Documentation (5:00 AM)
 log ""
 log "═══════════════════════════════════════════════════"

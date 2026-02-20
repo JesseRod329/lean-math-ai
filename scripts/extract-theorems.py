@@ -59,6 +59,8 @@ def extract_theorems_from_paper(paper, model=None, tokenizer=None):
         summary=paper.get('summary', '')[:2000]
     )
 
+    extraction_method = "heuristic"
+
     if MLX_AVAILABLE and model is not None and tokenizer is not None:
         try:
             # Use chat template for instruct models
@@ -76,11 +78,23 @@ def extract_theorems_from_paper(paper, model=None, tokenizer=None):
                 prompt=formatted_prompt,
                 max_tokens=2048
             )
+            extraction_method = "llm"
         except Exception as e:
-            print(f"  LLM generation failed: {e}")
-            return simulate_extraction(paper)
+            print(f"  WARNING: LLM extraction failed for {paper.get('id', 'unknown')}: {e}")
+            print(f"  Falling back to heuristic extraction")
+            candidates = simulate_extraction(paper)
+            for c in candidates:
+                c['extraction_method'] = 'heuristic'
+            return candidates
     else:
-        return simulate_extraction(paper)
+        if not MLX_AVAILABLE:
+            print(f"  INFO: MLX not available, using heuristic extraction for {paper.get('id', 'unknown')}")
+        elif model is None:
+            print(f"  INFO: No model loaded, using heuristic extraction for {paper.get('id', 'unknown')}")
+        candidates = simulate_extraction(paper)
+        for c in candidates:
+            c['extraction_method'] = 'heuristic'
+        return candidates
 
     # Parse JSON response
     try:
@@ -109,6 +123,7 @@ def extract_theorems_from_paper(paper, model=None, tokenizer=None):
                 'categories': paper.get('categories', [])
             }
             candidate['abstract_excerpt'] = abstract_excerpt
+            candidate['extraction_method'] = extraction_method
             # Generate stable ID from name
             safe_name = re.sub(r'[^a-zA-Z0-9]', '_', candidate.get('name', 'unknown'))[:30]
             candidate['id'] = f"{paper.get('id', 'unknown')}_{safe_name}"
@@ -118,10 +133,13 @@ def extract_theorems_from_paper(paper, model=None, tokenizer=None):
     except json.JSONDecodeError as e:
         print(f"  Failed to parse LLM response: {e}")
         print(f"  Raw response: {response[:200]}...")
-        return simulate_extraction(paper)
+        candidates = simulate_extraction(paper)
+        for c in candidates:
+            c['extraction_method'] = 'heuristic'
+        return candidates
 
 def simulate_extraction(paper):
-    """Improved fallback: extract theorem-indicator sentences from abstract"""
+    """Fallback: extract theorem-indicator sentences from abstract as candidates"""
     candidates = []
 
     title = paper.get('title', '')
@@ -136,84 +154,57 @@ def simulate_extraction(paper):
                                  'result', 'bound', 'inequality', 'conjecture',
                                  'characterize', 'classify', 'determine'])]
 
-    # Pick the best statement (first theorem-indicator sentence, or title-based)
-    if theorem_sentences:
-        statement = theorem_sentences[0]
-    else:
-        statement = f"Main result from: {title}"
+    # Build paper metadata once
+    source_paper = {
+        "id": paper.get('id'),
+        "title": title,
+        "authors": paper.get('authors', [])[:3],
+        "categories": paper.get('categories', [])
+    }
 
-    # Detect domain from title and abstract
+    # Detect mathematical objects from content
     text_lower = (title + ' ' + summary).lower()
+    objects = []
+    hints_parts = []
 
     if 'prime' in text_lower or 'divisor' in text_lower or 'arithmetic' in text_lower:
-        candidates.append({
-            "name": f"Number theory: {title[:60]}",
-            "statement": statement,
-            "objects": ["prime numbers", "integers", "arithmetic functions"],
-            "difficulty": "Medium",
-            "value": "Extends number theory library",
-            "formalization_hints": "Use Nat.Prime and related lemmas from mathlib4",
-            "source_paper": {
-                "id": paper.get('id'),
-                "title": title,
-                "authors": paper.get('authors', [])[:3],
-                "categories": paper.get('categories', [])
-            },
-            "abstract_excerpt": abstract_excerpt,
-            "id": f"{paper.get('id', 'unknown')}_nt"
-        })
-
+        objects.extend(["prime numbers", "integers", "arithmetic functions"])
+        hints_parts.append("Use Nat.Prime and related lemmas from mathlib4")
     if 'graph' in text_lower or 'vertex' in text_lower or 'edge' in text_lower:
-        candidates.append({
-            "name": f"Graph theory: {title[:60]}",
-            "statement": statement,
-            "objects": ["graphs", "vertices", "edges"],
-            "difficulty": "Medium",
-            "value": "Extends graph theory library",
-            "formalization_hints": "Use SimpleGraph from mathlib4",
-            "source_paper": {
-                "id": paper.get('id'),
-                "title": title,
-                "authors": paper.get('authors', [])[:3],
-                "categories": paper.get('categories', [])
-            },
-            "abstract_excerpt": abstract_excerpt,
-            "id": f"{paper.get('id', 'unknown')}_graph"
-        })
-
+        objects.extend(["graphs", "vertices", "edges"])
+        hints_parts.append("Use SimpleGraph from mathlib4")
     if 'combinat' in text_lower or 'partition' in text_lower or 'permutation' in text_lower:
-        candidates.append({
-            "name": f"Combinatorics: {title[:60]}",
-            "statement": statement,
-            "objects": ["finite sets", "combinatorial structures"],
-            "difficulty": "Medium",
-            "value": "Extends combinatorics library",
-            "formalization_hints": "Use Finset and Fintype from mathlib4",
-            "source_paper": {
-                "id": paper.get('id'),
-                "title": title,
-                "authors": paper.get('authors', [])[:3],
-                "categories": paper.get('categories', [])
-            },
-            "abstract_excerpt": abstract_excerpt,
-            "id": f"{paper.get('id', 'unknown')}_comb"
-        })
+        objects.extend(["finite sets", "combinatorial structures"])
+        hints_parts.append("Use Finset and Fintype from mathlib4")
+    if not objects:
+        objects = ["mathematical structures"]
+        hints_parts = ["Requires careful analysis of paper"]
 
-    # If nothing matched, still create a candidate with the paper's actual content
-    if not candidates:
+    # Create one candidate per theorem sentence found (up to 3)
+    if theorem_sentences:
+        for i, stmt in enumerate(theorem_sentences[:3]):
+            safe_name = re.sub(r'[^a-zA-Z0-9]', '_', title[:40])
+            candidates.append({
+                "name": f"{title[:60]}",
+                "statement": stmt,
+                "objects": objects,
+                "difficulty": "Medium",
+                "value": f"Formalizes result from {title[:40]}",
+                "formalization_hints": "; ".join(hints_parts),
+                "source_paper": source_paper,
+                "abstract_excerpt": abstract_excerpt,
+                "id": f"{paper.get('id', 'unknown')}_{safe_name}_{i}"
+            })
+    else:
+        # No theorem sentences found — use the full abstract as context
         candidates.append({
-            "name": f"Result: {title[:60]}",
-            "statement": statement,
-            "objects": ["mathematical structures"],
+            "name": f"{title[:60]}",
+            "statement": f"Main result from: {title}. {summary[:200]}",
+            "objects": objects,
             "difficulty": "Hard",
-            "value": "Novel formalization",
-            "formalization_hints": "Requires careful analysis of paper",
-            "source_paper": {
-                "id": paper.get('id'),
-                "title": title,
-                "authors": paper.get('authors', [])[:3],
-                "categories": paper.get('categories', [])
-            },
+            "value": f"Formalizes result from {title[:40]}",
+            "formalization_hints": "; ".join(hints_parts),
+            "source_paper": source_paper,
             "abstract_excerpt": abstract_excerpt,
             "id": f"{paper.get('id', 'unknown')}_result"
         })

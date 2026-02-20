@@ -32,13 +32,13 @@ if grep -q "STATUS: TEMPLATE_FALLBACK" "$PROOF_FILE" 2>/dev/null; then
     exit 4
 fi
 
-# Check for trivial proof (True := by trivial or True := by)
-if grep -q "True := by" "$PROOF_FILE" 2>/dev/null; then
-    # Only flag as trivial if there's no real theorem alongside it
-    sorry_count=$(grep -c "sorry" "$PROOF_FILE" 2>/dev/null || true)
-    sorry_count=${sorry_count:-0}
-    if [ "$sorry_count" -eq 0 ]; then
-        echo "TRIVIAL: $(basename $PROOF_FILE)"
+# Check for trivial proof (theorem statement is just True)
+# Catches: True := by trivial, True := by sorry, True := by decide, etc.
+if grep -qE ':\s*True\s*:=' "$PROOF_FILE" 2>/dev/null; then
+    real_theorems=$(grep -cE '^(theorem|lemma|example)\b' "$PROOF_FILE" 2>/dev/null || echo 0)
+    true_theorems=$(grep -cE ':\s*True\s*:=' "$PROOF_FILE" 2>/dev/null || echo 0)
+    if [ "${real_theorems:-0}" -le "${true_theorems:-0}" ]; then
+        echo "TRIVIAL: $(basename $PROOF_FILE) (all theorems prove True)"
         exit 5
     fi
 fi

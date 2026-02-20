@@ -9,6 +9,10 @@ import argparse
 import json
 import re
 import os
+import sys
+
+# Add scripts dir to path for importing search module
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Try different LLM backends
 try:
@@ -186,7 +190,24 @@ def generate_with_mlx(prompt, model_path):
         print(f"    MLX error: {e}")
         return None
 
-def generate_improved_code(candidate, model_path=None, attempts=3):
+def has_real_math_content(code):
+    """Check if generated Lean code contains real mathematical content, not just True placeholders"""
+    # Reject if all theorems prove True
+    theorem_lines = [l for l in code.split('\n') if re.match(r'\s*(theorem|lemma|example)\b', l)]
+    if not theorem_lines:
+        return False
+    # Check if any theorem has a non-True conclusion
+    true_pattern = re.compile(r':\s*True\s*:=')
+    for line in code.split('\n'):
+        if true_pattern.search(line):
+            continue
+        if re.match(r'\s*(theorem|lemma|example)\b', line):
+            return True  # Found a real theorem
+    # All theorems prove True
+    return False
+
+
+def generate_improved_code(candidate, model_path=None, attempts=3, mathlib_map=None):
     """Generate better Lean 4 code"""
 
     # Sanitize theorem name
@@ -194,6 +215,23 @@ def generate_improved_code(candidate, model_path=None, attempts=3):
     theorem_name = theorem_name[:50]
     if theorem_name[0].isdigit():
         theorem_name = 'thm_' + theorem_name
+
+    # Load mathlib library map if available
+    mathlib_refs = ""
+    if mathlib_map:
+        mathlib_refs = mathlib_map
+    else:
+        # Try to load from cached index
+        index_path = os.path.join(os.path.dirname(__file__), '..', 'MathAI', '.lake', 'mathlib-index.json')
+        if os.path.exists(index_path):
+            try:
+                with open(index_path, 'r') as f:
+                    index = json.load(f)
+                # Filter relevant theorems based on paper category
+                categories = candidate.get('source_paper', {}).get('categories', [])
+                mathlib_refs = _filter_mathlib_refs(index, categories, candidate.get('statement', ''))
+            except Exception:
+                pass
 
     # Build enhanced prompt with abstract content
     prompt = LEAN_PROVER_PROMPT.format(
@@ -205,6 +243,10 @@ def generate_improved_code(candidate, model_path=None, attempts=3):
         category=', '.join(candidate.get('source_paper', {}).get('categories', [])),
         abstract_excerpt=candidate.get('abstract_excerpt', 'Not available')
     )
+
+    # Append mathlib references if available
+    if mathlib_refs:
+        prompt += f"\n\n=== AVAILABLE MATHLIB THEOREMS (use these exact names) ===\n{mathlib_refs}"
 
     # Try different backends in order of quality
     backends = []
@@ -218,6 +260,8 @@ def generate_improved_code(candidate, model_path=None, attempts=3):
     if MLX_AVAILABLE and model_path:
         backends.append(('Local MLX', lambda p: generate_with_mlx(p, model_path)))
 
+    best_fallback = None  # Track best non-ideal code as fallback
+
     # Try each backend
     for backend_name, backend_fn in backends:
         for attempt in range(attempts):
@@ -228,21 +272,67 @@ def generate_improved_code(candidate, model_path=None, attempts=3):
                 if response:
                     code = extract_lean_code(response)
                     if code and 'theorem' in code.lower():
-                        # Accept if it has a real theorem statement (not just True)
-                        if 'True := by' not in code:
+                        if has_real_math_content(code):
                             print(f"  ✓ Generated real theorem with {backend_name}")
                             return code
-                        elif 'sorry' in code:
-                            # Has True but also sorry — slightly better than trivial
-                            print(f"  ~ Generated with {backend_name} (has True placeholder)")
-                            return code
+                        else:
+                            # Code has theorems but they all prove True — save as fallback
+                            print(f"  ~ {backend_name} generated True placeholder, trying again...")
+                            if best_fallback is None:
+                                best_fallback = code
             except Exception as e:
                 print(f"  ✗ {backend_name} error: {e}")
                 continue
 
-    # Fallback: generate improved template
+    # If we have a True-placeholder fallback, use it with TEMPLATE marker
+    if best_fallback:
+        print("  ⚠️  No real math generated, using best placeholder as template")
+        return f"-- STATUS: TEMPLATE_FALLBACK\n{best_fallback}"
+
+    # Final fallback: generate improved template
     print("  ⚠️  All backends failed, using improved template")
     return generate_improved_template(candidate, theorem_name)
+
+
+def _filter_mathlib_refs(index, categories, statement):
+    """Filter mathlib index to relevant theorems using semantic search if available"""
+    # Try semantic search first (much better results)
+    try:
+        from build_mathlib_index import search_mathlib
+        refs = search_mathlib(statement, top_k=30)
+        if refs:
+            return refs
+    except ImportError:
+        pass
+
+    # Fallback: category-based filtering
+    relevant_domains = []
+    for cat in categories:
+        if 'CO' in cat:
+            relevant_domains.extend(['Combinatorics', 'Data.Finset', 'Data.Fintype'])
+        if 'NT' in cat:
+            relevant_domains.extend(['NumberTheory', 'Data.Nat.Prime', 'Data.Int'])
+        if 'AG' in cat:
+            relevant_domains.extend(['AlgebraicGeometry', 'RingTheory'])
+        if 'GR' in cat:
+            relevant_domains.extend(['GroupTheory', 'Algebra.Group'])
+
+    if not relevant_domains:
+        relevant_domains = ['Data.Nat', 'Data.Int', 'Algebra']
+
+    lines = []
+    count = 0
+    for domain, entries in index.items():
+        if count >= 50:
+            break
+        if any(d in domain for d in relevant_domains):
+            module = entries.get('module', domain)
+            lines.append(f"-- import {module}")
+            for thm in entries.get('theorems', [])[:5]:
+                lines.append(f"--   {thm['name']}: {thm.get('sig', '')[:80]}")
+                count += 1
+
+    return '\n'.join(lines) if lines else ""
 
 def generate_improved_template(candidate, theorem_name):
     """Generate a better template with actual structure"""

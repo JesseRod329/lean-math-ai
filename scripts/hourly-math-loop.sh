@@ -148,6 +148,21 @@ while read -r candidate; do
     fi
 done < <(jq -c '.candidates[]' $CANDIDATES_FILE 2>/dev/null)
 
+# Phase 3.5: Refinement Pass (retry failed/formalized proofs)
+log ""
+log "═══════════════════════════════════════════════════"
+log "PHASE 3.5: Refinement Pass"
+log "═══════════════════════════════════════════════════"
+
+if [ -d "$RUN_DIR" ] && ls "$RUN_DIR"/*.lean 1>/dev/null 2>&1; then
+    python3 scripts/refine-failed-proofs.py \
+        --proofs-dir "$RUN_DIR" \
+        --max-attempts 2 \
+        --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit 2>&1 | tee -a "$LOG_DIR/hourly-$DATE.log"
+else
+    log "No proof files to refine"
+fi
+
 # Phase 4: Update Dashboard
 log ""
 log "═══════════════════════════════════════════════════"
@@ -204,6 +219,42 @@ cat > "$DASHBOARD_DATA" << EOF
   "status": "running"
 }
 EOF
+
+# Generate proof listing for dashboard
+python3 -c "
+import json, os, glob, subprocess, re
+
+proofs = []
+proof_dir = 'proofs/$DATE'
+if os.path.isdir(proof_dir):
+    for lean_file in sorted(glob.glob(os.path.join(proof_dir, '**', '*.lean'), recursive=True)):
+        name = os.path.basename(lean_file).replace('.lean', '')
+        abs_path = os.path.abspath(lean_file)
+
+        # Determine status from content
+        with open(lean_file, 'r') as f:
+            content = f.read()
+
+        if 'STATUS: TEMPLATE_FALLBACK' in content:
+            status = 'template'
+        elif re.search(r':\s*True\s*:=', content):
+            status = 'trivial'
+        elif 'sorry' in content:
+            status = 'formalized'
+        else:
+            status = 'unknown'  # Will be updated by verification
+
+        proofs.append({
+            'id': name,
+            'path': abs_path,
+            'status': status,
+            'vscode_url': f'vscode://file/{abs_path}'
+        })
+
+with open('dashboard/data/proofs.json', 'w') as f:
+    json.dump(proofs, f, indent=2)
+print(f'Generated dashboard proof listing: {len(proofs)} proofs')
+" 2>&1 | tee -a "$LOG_DIR/hourly-$DATE.log"
 
 log ""
 success "🎉 Hourly automation complete!"
