@@ -23,6 +23,12 @@
 
 ---
 
+<p align="center">
+  <img src="assets/demo.gif" alt="Lean Math AI pipeline demo" width="700">
+</p>
+
+---
+
 ## Why This Matters
 
 Mathematics has a verification crisis. Published proofs can contain errors that go undetected for years. Formal verification in proof assistants like Lean 4 is the gold standard — but manually formalizing a single theorem can take days or weeks.
@@ -36,29 +42,6 @@ Mathematics has a verification crisis. Published proofs can contain errors that 
 5. Reports results honestly — no fake "proven" claims
 
 This is infrastructure for **accelerating mathematical knowledge**. Every theorem that gets formally verified becomes permanently trustworthy, machine-readable, and composable with the rest of mathematics.
-
-## Demo: Real Output
-
-The AI reads a paper about K5-minor-free graph colorings and generates:
-
-```lean
-import Mathlib
-import Mathlib.Combinatorics.SimpleGraph.Basic
-import Mathlib.Combinatorics.SimpleGraph.Coloring
-
-/-- For every K₅-minor-free graph G and every correspondence 6-cover M of G,
-    there exist 3 pairwise disjoint M-colorings of G. -/
-theorem disjoint_correspondence_colorings
-    (V : Type) [Fintype V] (G : SimpleGraph V)
-    [DecidableEq V] [Fintype (G.edgeSet)] :
-    ∃ (φ1 φ2 φ3 : G.Coloring (Fin 6)),
-    ∀ v, φ1 v ≠ φ2 v ∧ φ1 v ≠ φ3 v ∧ φ2 v ≠ φ3 v := by
-  sorry -- Proof requires deep graph theory
-```
-
-Compare to what most systems produce: `theorem X : True := by trivial`
-
-**This system generates real mathematics, not placeholders.**
 
 ## How It Works
 
