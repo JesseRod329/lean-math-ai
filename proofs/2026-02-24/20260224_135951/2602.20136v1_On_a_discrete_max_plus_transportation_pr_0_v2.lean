@@ -1,0 +1,7 @@
+import Mathlib
+import Mathlib.Combinatorics.SimpleGraph.Basic
+
+/-- We provide an explicit algorithm to solve the idempotent analogue of the discrete Monge-Kantorovich optimal mass transportation problem with the usual real number field replaced by the tropical (max-plus) semiring, in which addition is defined as the maximum and product is defined as usual addition, with minus infinity and zero playing the roles of additive and multiplicative identities. Such a problem may be naturally called tropical or "max-plus" optimal transportation problem. We show that the solutions to the latter, called the optimal tropical plans, may not correspond to perfect matchings even if the data (max-plus probability measures) have all weights equal to zero, in contrast with the classical discrete optimal transportation analogue, where perfect matching optimal plans in similar situations always exist. Nevertheless, in some randomized situation the existence of perfect matching optimal tropical plans may occur rather frequently. At last, we prove that the uniqueness of solutions of the optimal tropical transportation problem is quite rare. -/
+theorem optimal_tropical_plans_not_perfect_matchings:
+  False := by
+  sorry -- Proof goes here

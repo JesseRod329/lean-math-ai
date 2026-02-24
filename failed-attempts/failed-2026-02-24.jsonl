@@ -1,0 +1,26 @@
+{
+  "name": "An isoperimetric inequality for word overlap",
+  "statement": "This bound is sharp up to a factor of $e$.",
+  "objects": [
+    "mathematical structures"
+  ],
+  "difficulty": "Medium",
+  "value": "Formalizes result from An isoperimetric inequality for word ove",
+  "formalization_hints": "Requires careful analysis of paper",
+  "source_paper": {
+    "id": "2602.20143v1",
+    "title": "An isoperimetric inequality for word overlap",
+    "authors": [
+      "Dmitrii Zakharov"
+    ],
+    "categories": [
+      "math.CO"
+    ]
+  },
+  "abstract_excerpt": "Let $A$ and $B$ be sets of words of length $n$ over some finite alphabet. Suppose that no suffix of a word in $A$ coincides with a prefix of a word in $B$. Then we show that the product of densities of $A$ and $B$ is upper bounded by $1/n$. This bound is sharp up to a factor of $e$.",
+  "id": "2602.20143v1_An_isoperimetric_inequality_for_word_ove_1",
+  "extraction_method": "heuristic",
+  "status": "failed",
+  "date": "2026-02-24",
+  "hour": "13:59"
+}

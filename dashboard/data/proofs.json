@@ -1,62 +1,80 @@
 [
   {
-    "id": "2602.18427v1_Theorem_1__Core_Positions_and_",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_003644/2602.18427v1_Theorem_1__Core_Positions_and_.lean",
+    "id": "2602.20143v1_An_isoperimetric_inequality_fo",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_020848/2602.20143v1_An_isoperimetric_inequality_fo.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_020848/2602.20143v1_An_isoperimetric_inequality_fo.lean"
+  },
+  {
+    "id": "2602.20136v1_Algorithm_for_the_Optimal_Trop",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_043736/2602.20136v1_Algorithm_for_the_Optimal_Trop.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_043736/2602.20136v1_Algorithm_for_the_Optimal_Trop.lean"
+  },
+  {
+    "id": "2602.20136v1_Uniqueness_of_Solutions_in_the",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_054132/2602.20136v1_Uniqueness_of_Solutions_in_the.lean",
     "status": "template",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_003644/2602.18427v1_Theorem_1__Core_Positions_and_.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_054132/2602.20136v1_Uniqueness_of_Solutions_in_the.lean"
   },
   {
-    "id": "2602.18427v1_Theorem_2__Linear_Inequality_D",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_014058/2602.18427v1_Theorem_2__Linear_Inequality_D.lean",
+    "id": "2602.20109v1_Ramanujan_Vector_Field_Modulo_",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_120925/2602.20109v1_Ramanujan_Vector_Field_Modulo_.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_014058/2602.18427v1_Theorem_2__Linear_Inequality_D.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_120925/2602.20109v1_Ramanujan_Vector_Field_Modulo_.lean"
   },
   {
-    "id": "2602.18427v1_Theorem_3__Chv_tal_Gomory_Ineq",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_024216/2602.18427v1_Theorem_3__Chv_tal_Gomory_Ineq.lean",
+    "id": "2602.20109v1_Supersingular_Elliptic_Curves_",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_134157/2602.20109v1_Supersingular_Elliptic_Curves_.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_024216/2602.18427v1_Theorem_3__Chv_tal_Gomory_Ineq.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_134157/2602.20109v1_Supersingular_Elliptic_Curves_.lean"
   },
   {
-    "id": "2602.18402v1_Improved_upper_bound_on_the_ra",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_034311/2602.18402v1_Improved_upper_bound_on_the_ra.lean",
+    "id": "2602.20095v1_Subconvexity_Theorem",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135401/2602.20095v1_Subconvexity_Theorem.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_034311/2602.18402v1_Improved_upper_bound_on_the_ra.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135401/2602.20095v1_Subconvexity_Theorem.lean"
   },
   {
-    "id": "2602.18402v1_Bounded_ratio_for_chordal_bipa",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_044355/2602.18402v1_Bounded_ratio_for_chordal_bipa.lean",
+    "id": "2602.20143v1_An_isoperimetric_inequality_for_word_ove_0",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135822/2602.20143v1_An_isoperimetric_inequality_for_word_ove_0.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_044355/2602.18402v1_Bounded_ratio_for_chordal_bipa.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135822/2602.20143v1_An_isoperimetric_inequality_for_word_ove_0.lean"
   },
   {
-    "id": "2602.18402v1_Bounded_ratio_for_homogeneousl",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_101217/2602.18402v1_Bounded_ratio_for_homogeneousl.lean",
+    "id": "2602.20136v1_On_a_discrete_max_plus_transportation_pr_0",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20136v1_On_a_discrete_max_plus_transportation_pr_0.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_101217/2602.18402v1_Bounded_ratio_for_homogeneousl.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20136v1_On_a_discrete_max_plus_transportation_pr_0.lean"
   },
   {
-    "id": "2602.18398v1_Codegree_Tur_n_Densities_of_Lo",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_125618/2602.18398v1_Codegree_Tur_n_Densities_of_Lo.lean",
+    "id": "2602.20136v1_On_a_discrete_max_plus_transportation_pr_0_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20136v1_On_a_discrete_max_plus_transportation_pr_0_v1.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_125618/2602.18398v1_Codegree_Tur_n_Densities_of_Lo.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20136v1_On_a_discrete_max_plus_transportation_pr_0_v1.lean"
   },
   {
-    "id": "2602.18398v1_Drop_in_Codegree_Tur_n_Densiti",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_135717/2602.18398v1_Drop_in_Codegree_Tur_n_Densiti.lean",
+    "id": "2602.20136v1_On_a_discrete_max_plus_transportation_pr_0_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20136v1_On_a_discrete_max_plus_transportation_pr_0_v2.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_135717/2602.18398v1_Drop_in_Codegree_Tur_n_Densiti.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20136v1_On_a_discrete_max_plus_transportation_pr_0_v2.lean"
   },
   {
-    "id": "2602.18362v1_Theorem_on_Co_bipartite_Graphs",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_145819/2602.18362v1_Theorem_on_Co_bipartite_Graphs.lean",
-    "status": "template",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_145819/2602.18362v1_Theorem_on_Co_bipartite_Graphs.lean"
-  },
-  {
-    "id": "2602.18362v1_Lemma_on_Minimal_Redundant_Set",
-    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_163843/2602.18362v1_Lemma_on_Minimal_Redundant_Set.lean",
+    "id": "2602.20143v1_An_isoperimetric_inequality_for_word_ove_1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1.lean",
     "status": "formalized",
-    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_163843/2602.18362v1_Lemma_on_Minimal_Redundant_Set.lean"
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1.lean"
+  },
+  {
+    "id": "2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v1.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v1.lean"
+  },
+  {
+    "id": "2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v2.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v2.lean"
   }
 ]
