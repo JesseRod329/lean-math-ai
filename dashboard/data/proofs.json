@@ -166,5 +166,53 @@
     "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_144252/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__2_v3.lean",
     "status": "formalized",
     "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_144252/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__2_v3.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_0",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0.lean",
+    "status": "template",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v1.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v2.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_0_v3.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v1.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v2.lean"
+  },
+  {
+    "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v3.lean"
   }
 ]

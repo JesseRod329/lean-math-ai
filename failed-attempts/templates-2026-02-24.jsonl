@@ -27,3 +27,32 @@
   "date": "2026-02-24",
   "hour": "14:42"
 }
+{
+  "name": "Large fluctuations of random multiplicative functions",
+  "statement": "This extends the general central limit theorem framework of Soundararajan and Xu.",
+  "objects": [
+    "prime numbers",
+    "integers",
+    "arithmetic functions"
+  ],
+  "difficulty": "Medium",
+  "value": "Formalizes result from Large fluctuations of random multiplicat",
+  "formalization_hints": "Use Nat.Prime and related lemmas from mathlib4",
+  "source_paper": {
+    "id": "2602.20086v1",
+    "title": "Large fluctuations of random multiplicative functions",
+    "authors": [
+      "Besfort Shala"
+    ],
+    "categories": [
+      "math.NT",
+      "math.PR"
+    ]
+  },
+  "abstract_excerpt": "Let $f$ be a Rademacher or Steinhaus random multiplicative function. For various arithmetically interesting subsets $\\mathcal A\\subseteq [1, N]\\cap\\mathbb N$ such that the distribution of $\\sum_{n\\in \\mathcal A} f(n)$ is approximately Gaussian, we develop a general framework to understand the large fluctuations of the sum. This extends the general central limit theorem framework of Soundararajan and Xu.\n  In the case when $\\mathcal A = (N-H, N]$ is a short interval with admissible $H=H(N)$, we show that almost surely \\begin{equation*}\n  \\limsup_{N\\to\\infty} \\frac{\\big\\lvert\\sum_{N-H<n\\leq N} f(n)\\big\\rvert}{\\sqrt{H\\log \\frac{N}H{}}}>0. \\end{equation*} When $\\mathcal A$ is the set of values of an admissible polynomial $P\\in\\mathbb Z[x]$, we extend work of Klurman, Shkredov, and Xu, as well as Chinis and the author, showing that almost surely \\begin{equation*}\n  \\limsup_{N\\to\\infty} \\frac{\\big\\lvert\\sum_{n\\leq N} f(P(n))\\big\\rvert}{\\sqrt{N \\log\\log N}}>0, \\end{equation*} even when $P$ is a product of linear factors over $\\mathbb Q$. In this case, we also establish the corresponding almost sure upper bound, matching the law of iterated logarithm.\n  An important ingredient in our work is bounding the Kantorovich--Wasserstein distance by means of a quantitative martingale central limit theorem.",
+  "id": "2602.20086v1_Large_fluctuations_of_random_multiplicat_0",
+  "extraction_method": "heuristic",
+  "status": "template",
+  "date": "2026-02-24",
+  "hour": "15:17"
+}

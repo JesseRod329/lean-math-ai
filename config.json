@@ -1,31 +1,34 @@
 {
-  "arxiv": {
-    "categories": ["math.NT", "math.CO"],
-    "days_back": 1,
-    "max_results": 50
+  "arxiv" : {
+    "categories" : [
+      "math.NT",
+      "math.CO"
+    ],
+    "days_back" : 1,
+    "max_results" : 100
   },
-  "extraction": {
-    "model": "mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit",
-    "max_candidates": 10,
-    "max_per_paper": 3
+  "extraction" : {
+    "max_candidates" : 20,
+    "max_per_paper" : 3,
+    "model" : "mlx-community\/DeepSeek-Coder-V2-Lite-Instruct-4bit"
   },
-  "formalization": {
-    "backend": "mlx",
-    "model": "mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit",
-    "anthropic_model": "claude-sonnet-4-20250514",
-    "openai_model": "gpt-4o",
-    "attempts": 3,
-    "max_tokens": 4096,
-    "temperature": 0.1,
-    "max_per_hour": 3
+  "formalization" : {
+    "anthropic_model" : "claude-sonnet-4-20250514",
+    "attempts" : 5,
+    "backend" : "mlx",
+    "max_per_hour" : 10,
+    "max_tokens" : 4096,
+    "model" : "mlx-community\/DeepSeek-Coder-V2-Lite-Instruct-4bit",
+    "openai_model" : "gpt-4o",
+    "temperature" : 0.1
   },
-  "refinement": {
-    "enabled": true,
-    "max_attempts": 3,
-    "model": "mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"
+  "refinement" : {
+    "enabled" : true,
+    "max_attempts" : 3,
+    "model" : "mlx-community\/DeepSeek-Coder-V2-Lite-Instruct-4bit"
   },
-  "schedule": {
-    "run_interval_minutes": 60,
-    "auto_run": false
+  "schedule" : {
+    "auto_run" : false,
+    "run_interval_minutes" : 60
   }
 }
