@@ -83,3 +83,31 @@
   "date": "2026-02-24",
   "hour": "14:08"
 }
+{
+  "name": "Subconvexity Problem on $\\operatorname{GL}_3$ over number fi",
+  "statement": "For a fixed unitary cuspidal automorphic representation $π$ of $\\operatorname{GL}_3/F$ we show that \\begin{equation*} L(π\\otimes χ,\\tfrac{1}{2})\\ll \\ N(\\mathfrak{q})^{3/4-κ}.\\end{equation*} holds for all $κ< \\frac{1}{36}$.",
+  "objects": [
+    "prime numbers",
+    "integers",
+    "arithmetic functions"
+  ],
+  "difficulty": "Medium",
+  "value": "Formalizes result from Subconvexity Problem on $\\operatorname{G",
+  "formalization_hints": "Use Nat.Prime and related lemmas from mathlib4",
+  "source_paper": {
+    "id": "2602.20095v1",
+    "title": "Subconvexity Problem on $\\operatorname{GL}_3$ over number fields: the twist aspect",
+    "authors": [
+      "Filippo Berta"
+    ],
+    "categories": [
+      "math.NT"
+    ]
+  },
+  "abstract_excerpt": "Let $F$ denote a number field and let $\\mathfrak{q}\\subset O_F$ traverse a sequence of prime ideals with norm $N(\\mathfrak{q}) \\to \\infty$ and for each $\\mathfrak{q}$, let $χ\\in \\widehat{F^{\\times}\\setminus \\mathbb{A}^\\times}$ be a finite order character of conductor $\\mathfrak{q}$. For a fixed unitary cuspidal automorphic representation $π$ of $\\operatorname{GL}_3/F$ we show that \\begin{equation*} L(π\\otimes χ,\\tfrac{1}{2})\\ll \\ N(\\mathfrak{q})^{3/4-κ}.\\end{equation*} holds for all $κ< \\frac{1}{36}$.",
+  "id": "2602.20095v1_Subconvexity_Problem_on___operatorname_G_0",
+  "extraction_method": "heuristic",
+  "status": "failed",
+  "date": "2026-02-24",
+  "hour": "14:42"
+}

@@ -1,11 +1,11 @@
 {
-  "last_update": "2026-02-24T19:10:56Z",
+  "last_update": "2026-02-24T19:48:49Z",
   "date": "2026-02-24",
-  "hour": "14:08",
+  "hour": "14:42",
   "papers": 5,
   "candidates": 10,
-  "processed_this_hour": 2,
+  "processed_this_hour": 3,
   "proven_today": 0,
-  "formalized_today": 1,
+  "formalized_today": 2,
   "status": "running"
 }
