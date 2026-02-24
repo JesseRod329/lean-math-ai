@@ -418,5 +418,83 @@
     "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v3.lean",
     "status": "formalized",
     "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v3.lean"
+  },
+  {
+    "id": "2602.19950v1_Complete_Description_of_Identi",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Complete_Description_of_Identi.lean",
+    "status": "template",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Complete_Description_of_Identi.lean"
+  },
+  {
+    "id": "2602.19950v1_Observationally_Equivalent_Dis",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis.lean"
+  },
+  {
+    "id": "2602.19950v1_Observationally_Equivalent_Dis_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis_v1.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis_v1.lean"
+  },
+  {
+    "id": "2602.19950v1_Observationally_Equivalent_Dis_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis_v2.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis_v2.lean"
+  },
+  {
+    "id": "2602.19950v1_Observationally_Equivalent_Dis_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis_v3.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19950v1_Observationally_Equivalent_Dis_v3.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v1.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v1.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v2.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v2.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v3.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_1_v3.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v1.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v2.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_172037/2602.19989v1_New_bounds_for__weak__sequenceability_in_2_v3.lean"
   }
 ]
