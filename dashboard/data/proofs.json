@@ -214,5 +214,209 @@
     "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v3.lean",
     "status": "formalized",
     "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_151741/2602.20086v1_Large_fluctuations_of_random_multiplicat_1_v3.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_0",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v1.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v2.lean"
+  },
+  {
+    "id": "2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.19989v1_New_bounds_for__weak__sequenceability_in_0_v3.lean"
+  },
+  {
+    "id": "2602.20036v1_Theorem_on_Symmetric_Solutions",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions.lean"
+  },
+  {
+    "id": "2602.20036v1_Theorem_on_Symmetric_Solutions_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions_v1.lean"
+  },
+  {
+    "id": "2602.20036v1_Theorem_on_Symmetric_Solutions_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions_v2.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions_v2.lean"
+  },
+  {
+    "id": "2602.20036v1_Theorem_on_Symmetric_Solutions_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions_v3.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Theorem_on_Symmetric_Solutions_v3.lean"
+  },
+  {
+    "id": "2602.20036v1_Zero_Lemma",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma.lean"
+  },
+  {
+    "id": "2602.20036v1_Zero_Lemma_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma_v1.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma_v1.lean"
+  },
+  {
+    "id": "2602.20036v1_Zero_Lemma_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma_v2.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma_v2.lean"
+  },
+  {
+    "id": "2602.20036v1_Zero_Lemma_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma_v3.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20036v1_Zero_Lemma_v3.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_0",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v1.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v2.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_0_v3.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v1.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v2.lean"
+  },
+  {
+    "id": "2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20056v1_Quantitative_results_on_the__k__dimensio_1_v3.lean"
+  },
+  {
+    "id": "2602.20069v1_Definition_of_dioperadic_tree",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Definition_of_dioperadic_tree.lean",
+    "status": "template",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Definition_of_dioperadic_tree.lean"
+  },
+  {
+    "id": "2602.20069v1_Theorem_on_the_dimensions_of_s",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_dimensions_of_s.lean",
+    "status": "template",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_dimensions_of_s.lean"
+  },
+  {
+    "id": "2602.20069v1_Theorem_on_the_existence_of_qu",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu.lean"
+  },
+  {
+    "id": "2602.20069v1_Theorem_on_the_existence_of_qu_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu_v1.lean"
+  },
+  {
+    "id": "2602.20069v1_Theorem_on_the_existence_of_qu_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu_v2.lean"
+  },
+  {
+    "id": "2602.20069v1_Theorem_on_the_existence_of_qu_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20069v1_Theorem_on_the_existence_of_qu_v3.lean"
+  },
+  {
+    "id": "2602.20086v1_Lemma_on_bounding_the_Kantorov",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov.lean"
+  },
+  {
+    "id": "2602.20086v1_Lemma_on_bounding_the_Kantorov_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov_v1.lean"
+  },
+  {
+    "id": "2602.20086v1_Lemma_on_bounding_the_Kantorov_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov_v2.lean"
+  },
+  {
+    "id": "2602.20086v1_Lemma_on_bounding_the_Kantorov_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Lemma_on_bounding_the_Kantorov_v3.lean"
+  },
+  {
+    "id": "2602.20086v1_Theorem_about_large_fluctuatio",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio.lean"
+  },
+  {
+    "id": "2602.20086v1_Theorem_about_large_fluctuatio_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v1.lean"
+  },
+  {
+    "id": "2602.20086v1_Theorem_about_large_fluctuatio_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v2.lean"
+  },
+  {
+    "id": "2602.20086v1_Theorem_about_large_fluctuatio_v3",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v3.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_155545/2602.20086v1_Theorem_about_large_fluctuatio_v3.lean"
   }
 ]

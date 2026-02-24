@@ -4,7 +4,7 @@
       "math.NT",
       "math.CO"
     ],
-    "days_back" : 1,
+    "days_back" : 7,
     "max_results" : 100
   },
   "extraction" : {
