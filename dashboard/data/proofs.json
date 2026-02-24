@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "id": "2602.18427v1_Theorem_1__Core_Positions_and_",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_003644/2602.18427v1_Theorem_1__Core_Positions_and_.lean",
+    "status": "template",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_003644/2602.18427v1_Theorem_1__Core_Positions_and_.lean"
+  },
+  {
+    "id": "2602.18427v1_Theorem_2__Linear_Inequality_D",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_014058/2602.18427v1_Theorem_2__Linear_Inequality_D.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_014058/2602.18427v1_Theorem_2__Linear_Inequality_D.lean"
+  },
+  {
+    "id": "2602.18427v1_Theorem_3__Chv_tal_Gomory_Ineq",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_024216/2602.18427v1_Theorem_3__Chv_tal_Gomory_Ineq.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_024216/2602.18427v1_Theorem_3__Chv_tal_Gomory_Ineq.lean"
+  },
+  {
+    "id": "2602.18402v1_Improved_upper_bound_on_the_ra",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_034311/2602.18402v1_Improved_upper_bound_on_the_ra.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_034311/2602.18402v1_Improved_upper_bound_on_the_ra.lean"
+  },
+  {
+    "id": "2602.18402v1_Bounded_ratio_for_chordal_bipa",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_044355/2602.18402v1_Bounded_ratio_for_chordal_bipa.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_044355/2602.18402v1_Bounded_ratio_for_chordal_bipa.lean"
+  },
+  {
+    "id": "2602.18402v1_Bounded_ratio_for_homogeneousl",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_101217/2602.18402v1_Bounded_ratio_for_homogeneousl.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_101217/2602.18402v1_Bounded_ratio_for_homogeneousl.lean"
+  },
+  {
+    "id": "2602.18398v1_Codegree_Tur_n_Densities_of_Lo",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_125618/2602.18398v1_Codegree_Tur_n_Densities_of_Lo.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_125618/2602.18398v1_Codegree_Tur_n_Densities_of_Lo.lean"
+  },
+  {
+    "id": "2602.18398v1_Drop_in_Codegree_Tur_n_Densiti",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_135717/2602.18398v1_Drop_in_Codegree_Tur_n_Densiti.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_135717/2602.18398v1_Drop_in_Codegree_Tur_n_Densiti.lean"
+  },
+  {
+    "id": "2602.18362v1_Theorem_on_Co_bipartite_Graphs",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_145819/2602.18362v1_Theorem_on_Co_bipartite_Graphs.lean",
+    "status": "template",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_145819/2602.18362v1_Theorem_on_Co_bipartite_Graphs.lean"
+  },
+  {
+    "id": "2602.18362v1_Lemma_on_Minimal_Redundant_Set",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_163843/2602.18362v1_Lemma_on_Minimal_Redundant_Set.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-23/20260223_163843/2602.18362v1_Lemma_on_Minimal_Redundant_Set.lean"
+  }
+]
