@@ -86,26 +86,28 @@ struct LeanCodeView: View {
 
         // Highlight line comments (--)
         let lines = source.split(separator: "\n", omittingEmptySubsequences: false)
-        var offset = result.startIndex
-        for line in lines {
+        var charPosition = 0
+        let totalChars = source.count
+        for (lineIndex, line) in lines.enumerated() {
             let lineStr = String(line)
             if let commentIdx = lineStr.range(of: "--") {
-                let charOffset = lineStr.distance(from: lineStr.startIndex, to: commentIdx.lowerBound)
-                let commentStart = result.index(offset, offsetByCharacters: charOffset)
-                let lineEnd = result.index(offset, offsetByCharacters: lineStr.count)
-                if commentStart < lineEnd {
-                    result[commentStart..<lineEnd].foregroundColor = NSColor(
-                        red: 0.5, green: 0.5, blue: 0.5, alpha: 0.8
-                    )
+                let commentCharOffset = lineStr.distance(from: lineStr.startIndex, to: commentIdx.lowerBound)
+                let commentStartPos = charPosition + commentCharOffset
+                let lineEndPos = charPosition + lineStr.count
+                if commentStartPos < totalChars && lineEndPos <= totalChars {
+                    let commentStart = result.index(result.startIndex, offsetByCharacters: commentStartPos)
+                    let lineEnd = result.index(result.startIndex, offsetByCharacters: lineEndPos)
+                    if commentStart < lineEnd {
+                        result[commentStart..<lineEnd].foregroundColor = NSColor(
+                            red: 0.5, green: 0.5, blue: 0.5, alpha: 0.8
+                        )
+                    }
                 }
             }
-            // Move offset past the line + newline
-            let advance = lineStr.count + 1
-            if let newOffset = Optional(result.index(offset, offsetByCharacters: advance)),
-               newOffset <= result.endIndex {
-                offset = newOffset
-            } else {
-                offset = result.endIndex
+            // Advance past the line content + newline separator
+            charPosition += lineStr.count
+            if lineIndex < lines.count - 1 {
+                charPosition += 1 // newline
             }
         }
 
