@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainView: View {
     @Environment(DataDirectoryService.self) var directoryService
+    @Environment(ConfigService.self) var configService
     @State private var selectedItem: SidebarItem = .dashboard
     @State private var fileWatcher = FileWatcherService()
 
@@ -54,7 +55,8 @@ struct MainView: View {
         timelineVM.refresh(from: directoryService)
         settingsVM.refresh(from: directoryService)
         if let baseDir = directoryService.baseDirectory {
-            pipelineService.configure(baseDirectory: baseDir)
+            configService.configure(baseDirectory: baseDir)
+            pipelineService.configure(baseDirectory: baseDir, configService: configService)
         }
     }
 

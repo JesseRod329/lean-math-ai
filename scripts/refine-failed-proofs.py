@@ -42,12 +42,20 @@ REFINEMENT_PROMPT = """You are an expert Lean 4 proof engineer fixing compilatio
 === LEAN COMPILER ERRORS ===
 {error_output}
 
+=== CRITICAL LEAN 4 SYNTAX RULES ===
+- NEVER use `begin`/`end` (that is Lean 3). Use `by` for tactic blocks.
+- The theorem type must be an actual proposition, NOT `Prop` itself.
+- WRONG: `theorem foo : Prop := by sorry`
+- CORRECT: `theorem foo : n > 0 := by sorry`
+- Always start with `import Mathlib`
+
 === INSTRUCTIONS ===
 1. Fix the specific errors shown above
 2. Keep the theorem statement the same (or improve it if the type signature is wrong)
 3. Fix import paths — use exact mathlib4 module names
 4. If you can't fully prove it, use `sorry` but make the statement compile
 5. Do NOT replace the theorem with `True := by trivial`
+6. Do NOT use begin/end — use `by` for all tactic blocks
 
 {mathlib_refs}
 
@@ -59,8 +67,14 @@ MATHAI_DIR = os.path.join(PROJECT_DIR, 'MathAI')
 
 def get_lean_errors(filepath):
     """Run lean on a file and capture compiler errors"""
+    # Ensure absolute path
+    filepath = os.path.abspath(filepath)
+
     env = os.environ.copy()
     env['PATH'] = os.path.expanduser('~/.elan/bin') + ':' + env.get('PATH', '')
+
+    if not os.path.isdir(MATHAI_DIR):
+        return f"ERROR: MathAI directory not found at {MATHAI_DIR}"
 
     try:
         result = subprocess.run(
@@ -69,10 +83,13 @@ def get_lean_errors(filepath):
             cwd=MATHAI_DIR, env=env
         )
         if result.returncode != 0:
-            return result.stderr[:3000]
+            errors = result.stderr[:3000] if result.stderr else result.stdout[:3000]
+            return errors if errors.strip() else f"Lean exited with code {result.returncode}"
         return None  # No errors
     except subprocess.TimeoutExpired:
         return "TIMEOUT: Lean compilation exceeded 120 seconds"
+    except FileNotFoundError:
+        return "ERROR: 'lake' command not found. Ensure elan/lean is installed."
     except Exception as e:
         return f"ERROR: {e}"
 

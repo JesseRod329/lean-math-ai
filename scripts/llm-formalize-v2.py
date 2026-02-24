@@ -49,6 +49,27 @@ Category: {category}
 === PAPER ABSTRACT ===
 {abstract_excerpt}
 
+=== CRITICAL LEAN 4 SYNTAX RULES ===
+You MUST write valid Lean 4 syntax. NEVER use Lean 3 syntax.
+
+WRONG (Lean 3 — DO NOT USE):
+  theorem foo : P := begin sorry end
+  theorem foo : P := by {{ sorry }}
+
+CORRECT (Lean 4 — USE THIS):
+  theorem foo : P := by sorry
+  theorem foo : P := by
+    sorry
+
+Other critical rules:
+- The theorem's TYPE must be a proposition (e.g., `n > 0`, `∃ x, P x`), NOT `Prop` itself
+- WRONG: `theorem foo : Prop := by sorry`  (Prop is not a proposition)
+- CORRECT: `theorem foo : n > 0 := by sorry`
+- WRONG: `theorem foo : False := by sorry`  (unprovable)
+- Always start with `import Mathlib`
+- Use `by` for tactic blocks, `where` for term-mode definitions
+- Do NOT generate repetitive placeholder hypotheses
+
 === LEAN 4 REQUIREMENTS ===
 1. Write a REAL theorem statement (NOT `True`, NOT a placeholder)
 2. Use appropriate types from mathlib4
@@ -70,9 +91,10 @@ import Mathlib
 import Mathlib.Combinatorics.SimpleGraph.Basic
 
 /-- Every connected graph with n vertices has at least n-1 edges. -/
-example (V : Type) [Fintype V] (G : SimpleGraph V) [DecidableEq V] [Fintype (G.edgeSet)] :
-    G.edgeSet.ncard >= Fintype.card V - 1 := by
-  sorry -- Proof goes here
+theorem connected_graph_min_edges (V : Type) [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Connected) :
+    G.edgeFinset.card ≥ Fintype.card V - 1 := by
+  sorry
 ```
 
 === YOUR TASK ===
@@ -110,7 +132,7 @@ def extract_lean_code(text):
 
     return None
 
-def generate_with_openai(prompt, model="gpt-4o"):
+def generate_with_openai(prompt, model="gpt-4o", max_tokens=4096, temperature=0.1):
     """Use OpenAI API"""
     if not OPENAI_AVAILABLE:
         return None
@@ -124,18 +146,18 @@ def generate_with_openai(prompt, model="gpt-4o"):
         response = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "You are an expert Lean 4 proof engineer. Write only valid Lean 4 code."},
+                {"role": "system", "content": "You are an expert Lean 4 proof engineer. Write only valid Lean 4 code. NEVER use Lean 3 syntax (begin/end). Always use 'by' for tactic blocks."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.1,
-            max_tokens=4096
+            temperature=temperature,
+            max_tokens=max_tokens
         )
         return response.choices[0].message.content
     except Exception as e:
         print(f"    OpenAI error: {e}")
         return None
 
-def generate_with_anthropic(prompt, model="claude-3-5-sonnet-20241022"):
+def generate_with_anthropic(prompt, model="claude-sonnet-4-20250514", max_tokens=4096, temperature=0.1):
     """Use Anthropic Claude"""
     if not ANTHROPIC_AVAILABLE:
         return None
@@ -148,7 +170,7 @@ def generate_with_anthropic(prompt, model="claude-3-5-sonnet-20241022"):
         client = anthropic.Anthropic(api_key=api_key)
         response = client.messages.create(
             model=model,
-            max_tokens=4096,
+            max_tokens=max_tokens,
             messages=[{"role": "user", "content": prompt}]
         )
         return response.content[0].text
@@ -156,7 +178,7 @@ def generate_with_anthropic(prompt, model="claude-3-5-sonnet-20241022"):
         print(f"    Anthropic error: {e}")
         return None
 
-def generate_with_mlx(prompt, model_path):
+def generate_with_mlx(prompt, model_path, max_tokens=4096):
     """Use local MLX model with caching"""
     if not MLX_AVAILABLE:
         return None
@@ -172,7 +194,7 @@ def generate_with_mlx(prompt, model_path):
 
         # Use chat template for instruct models
         messages = [
-            {"role": "system", "content": "You are an expert Lean 4 proof engineer. Write only valid, compilable Lean 4 code."},
+            {"role": "system", "content": "You are an expert Lean 4 proof engineer. Write only valid, compilable Lean 4 code. NEVER use begin/end (Lean 3). Always use 'by' for tactic blocks."},
             {"role": "user", "content": prompt}
         ]
         formatted_prompt = tokenizer.apply_chat_template(
@@ -183,12 +205,56 @@ def generate_with_mlx(prompt, model_path):
             model,
             tokenizer,
             prompt=formatted_prompt,
-            max_tokens=4096
+            max_tokens=max_tokens
         )
         return response
     except Exception as e:
         print(f"    MLX error: {e}")
         return None
+
+def validate_lean4_syntax(code):
+    """Pre-validate Lean 4 code before compilation. Returns (is_valid, issues)."""
+    issues = []
+
+    # Check for Lean 3 syntax
+    if re.search(r'\bbegin\b', code):
+        issues.append("Contains Lean 3 'begin' keyword — must use 'by' instead")
+    if re.search(r'\bend\b', code) and not re.search(r'--.*\bend\b', code):
+        # Check it's not just in a comment
+        for line in code.split('\n'):
+            stripped = line.strip()
+            if stripped == 'end' or re.match(r'end\s', stripped):
+                if not stripped.startswith('--'):
+                    issues.append("Contains Lean 3 'end' keyword")
+                    break
+
+    # Check for Prop as return type (not a proposition)
+    if re.search(r':\s*Prop\s*:=', code):
+        issues.append("Theorem type is 'Prop' itself — must be an actual proposition")
+
+    # Check for False as goal (unprovable)
+    if re.search(r':\s*False\s*:=', code):
+        issues.append("Theorem tries to prove False — unprovable without contradiction context")
+
+    # Check for missing import
+    if 'import' not in code:
+        issues.append("Missing import statement")
+
+    # Check for hallucinated repetitive blocks (>5 identical lines)
+    lines = code.split('\n')
+    if len(lines) > 10:
+        line_counts = {}
+        for line in lines:
+            stripped = line.strip()
+            if stripped and not stripped.startswith('--') and len(stripped) > 20:
+                line_counts[stripped] = line_counts.get(stripped, 0) + 1
+        for line_text, count in line_counts.items():
+            if count > 5:
+                issues.append(f"Hallucinated repetitive code: '{line_text[:50]}...' repeated {count} times")
+                break
+
+    return (len(issues) == 0, issues)
+
 
 def has_real_math_content(code):
     """Check if generated Lean code contains real mathematical content, not just True placeholders"""
@@ -207,7 +273,8 @@ def has_real_math_content(code):
     return False
 
 
-def generate_improved_code(candidate, model_path=None, attempts=3, mathlib_map=None):
+def generate_improved_code(candidate, model_path=None, attempts=3, mathlib_map=None,
+                           backend='auto', max_tokens=4096, temperature=0.1):
     """Generate better Lean 4 code"""
 
     # Sanitize theorem name
@@ -248,19 +315,24 @@ def generate_improved_code(candidate, model_path=None, attempts=3, mathlib_map=N
     if mathlib_refs:
         prompt += f"\n\n=== AVAILABLE MATHLIB THEOREMS (use these exact names) ===\n{mathlib_refs}"
 
-    # Try different backends in order of quality
+    # Build backend list based on --backend flag
     backends = []
 
-    if OPENAI_AVAILABLE and os.environ.get('OPENAI_API_KEY'):
-        backends.append(('OpenAI GPT-4o', lambda p: generate_with_openai(p)))
+    if backend in ('auto', 'anthropic'):
+        if ANTHROPIC_AVAILABLE and os.environ.get('ANTHROPIC_API_KEY'):
+            anthropic_model = model_path if backend == 'anthropic' else 'claude-sonnet-4-20250514'
+            backends.append(('Claude', lambda p, m=anthropic_model: generate_with_anthropic(p, model=m, max_tokens=max_tokens, temperature=temperature)))
 
-    if ANTHROPIC_AVAILABLE and os.environ.get('ANTHROPIC_API_KEY'):
-        backends.append(('Claude 3.5', lambda p: generate_with_anthropic(p)))
+    if backend in ('auto', 'openai'):
+        if OPENAI_AVAILABLE and os.environ.get('OPENAI_API_KEY'):
+            openai_model = model_path if backend == 'openai' else 'gpt-4o'
+            backends.append(('OpenAI', lambda p, m=openai_model: generate_with_openai(p, model=m, max_tokens=max_tokens, temperature=temperature)))
 
-    if MLX_AVAILABLE and model_path:
-        backends.append(('Local MLX', lambda p: generate_with_mlx(p, model_path)))
+    if backend in ('auto', 'mlx'):
+        if MLX_AVAILABLE and model_path:
+            backends.append(('Local MLX', lambda p: generate_with_mlx(p, model_path, max_tokens=max_tokens)))
 
-    best_fallback = None  # Track best non-ideal code as fallback
+    best_fallback = None
 
     # Try each backend
     for backend_name, backend_fn in backends:
@@ -272,11 +344,18 @@ def generate_improved_code(candidate, model_path=None, attempts=3, mathlib_map=N
                 if response:
                     code = extract_lean_code(response)
                     if code and 'theorem' in code.lower():
+                        # Validate Lean 4 syntax before accepting
+                        is_valid, issues = validate_lean4_syntax(code)
+                        if not is_valid:
+                            print(f"  ~ {backend_name} syntax issues: {'; '.join(issues)}")
+                            if best_fallback is None:
+                                best_fallback = code
+                            continue
+
                         if has_real_math_content(code):
                             print(f"  ✓ Generated real theorem with {backend_name}")
                             return code
                         else:
-                            # Code has theorems but they all prove True — save as fallback
                             print(f"  ~ {backend_name} generated True placeholder, trying again...")
                             if best_fallback is None:
                                 best_fallback = code
@@ -426,25 +505,34 @@ def main():
     parser.add_argument("--output", required=True, help="Output .lean file")
     parser.add_argument("--attempts", type=int, default=3, help="Number of attempts")
     parser.add_argument("--model", default="mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit",
-                       help="MLX model to use")
+                       help="Model to use")
     parser.add_argument("--backend", choices=['auto', 'openai', 'anthropic', 'mlx'],
                        default='auto', help="LLM backend to use")
+    parser.add_argument("--max-tokens", type=int, default=4096, help="Max tokens for generation")
+    parser.add_argument("--temperature", type=float, default=0.1, help="Temperature for generation")
 
     args = parser.parse_args()
 
     # Parse candidate
     candidate = json.loads(args.candidate)
-    print(f"Formalizing: {candidate.get('name', 'Unknown')}")
+    print(f"Formalizing: {candidate.get('name', 'Unknown')} [backend={args.backend}, model={args.model}]")
 
     # Generate improved code
-    code = generate_improved_code(candidate, args.model, args.attempts)
+    code = generate_improved_code(
+        candidate,
+        model_path=args.model,
+        attempts=args.attempts,
+        backend=args.backend,
+        max_tokens=args.max_tokens,
+        temperature=args.temperature
+    )
 
     # Write output
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     with open(args.output, 'w') as f:
         f.write(code)
 
-    print(f"✓ Generated {args.output}")
+    print(f"Generated {args.output}")
 
 if __name__ == "__main__":
     main()

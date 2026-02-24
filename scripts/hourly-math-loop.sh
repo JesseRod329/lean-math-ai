@@ -1,17 +1,68 @@
 #!/bin/bash
 # hourly-math-loop.sh
 # Run math automation every hour with duplicate prevention
+# Reads settings from config.json (or PIPELINE_CONFIG env var)
 
 set -e
 
-PROJECT_DIR="/Users/Jesse/clawd/lean-math-ai"
+PROJECT_DIR="/Users/jesse/clawd/lean-math-ai"
 LOG_DIR="$PROJECT_DIR/logs"
 DATE=$(date +%Y-%m-%d)
 HOUR=$(date +%H:%M)
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 cd "$PROJECT_DIR"
-export PATH="$HOME/.elan/bin:$PATH"
+export PATH="$HOME/.elan/bin:/opt/homebrew/bin:$PATH"
+
+# Source API keys if available
+[ -f "$HOME/.lean-math-ai-keys" ] && source "$HOME/.lean-math-ai-keys"
+
+# Load config
+CONFIG_FILE="${PIPELINE_CONFIG:-$PROJECT_DIR/config.json}"
+if [ -f "$CONFIG_FILE" ]; then
+    # Read settings from config.json
+    ARXIV_CATEGORIES=$(jq -r '.arxiv.categories | map("--category " + .) | join(" ")' "$CONFIG_FILE" 2>/dev/null || echo "--category math.NT --category math.CO")
+    ARXIV_DAYS=$(jq -r '.arxiv.days_back // 1' "$CONFIG_FILE" 2>/dev/null || echo "1")
+    ARXIV_MAX=$(jq -r '.arxiv.max_results // 50' "$CONFIG_FILE" 2>/dev/null || echo "50")
+    EXTRACT_MODEL=$(jq -r '.extraction.model // "mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"' "$CONFIG_FILE" 2>/dev/null)
+    EXTRACT_MAX=$(jq -r '.extraction.max_candidates // 10' "$CONFIG_FILE" 2>/dev/null || echo "10")
+    FORM_BACKEND=$(jq -r '.formalization.backend // "mlx"' "$CONFIG_FILE" 2>/dev/null || echo "mlx")
+    FORM_MODEL=$(jq -r '.formalization.model // "mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"' "$CONFIG_FILE" 2>/dev/null)
+    FORM_ANTHROPIC_MODEL=$(jq -r '.formalization.anthropic_model // "claude-sonnet-4-20250514"' "$CONFIG_FILE" 2>/dev/null)
+    FORM_OPENAI_MODEL=$(jq -r '.formalization.openai_model // "gpt-4o"' "$CONFIG_FILE" 2>/dev/null)
+    FORM_ATTEMPTS=$(jq -r '.formalization.attempts // 3' "$CONFIG_FILE" 2>/dev/null || echo "3")
+    FORM_MAX_TOKENS=$(jq -r '.formalization.max_tokens // 4096' "$CONFIG_FILE" 2>/dev/null || echo "4096")
+    FORM_TEMPERATURE=$(jq -r '.formalization.temperature // 0.1' "$CONFIG_FILE" 2>/dev/null || echo "0.1")
+    MAX_PER_HOUR=$(jq -r '.formalization.max_per_hour // 3' "$CONFIG_FILE" 2>/dev/null || echo "3")
+    REFINE_ENABLED=$(jq -r '.refinement.enabled // true' "$CONFIG_FILE" 2>/dev/null || echo "true")
+    REFINE_ATTEMPTS=$(jq -r '.refinement.max_attempts // 3' "$CONFIG_FILE" 2>/dev/null || echo "3")
+    REFINE_MODEL=$(jq -r '.refinement.model // "mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"' "$CONFIG_FILE" 2>/dev/null)
+else
+    # Defaults
+    ARXIV_CATEGORIES="--category math.NT --category math.CO"
+    ARXIV_DAYS=1
+    ARXIV_MAX=50
+    EXTRACT_MODEL="mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"
+    EXTRACT_MAX=10
+    FORM_BACKEND="mlx"
+    FORM_MODEL="mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"
+    FORM_ANTHROPIC_MODEL="claude-sonnet-4-20250514"
+    FORM_OPENAI_MODEL="gpt-4o"
+    FORM_ATTEMPTS=3
+    FORM_MAX_TOKENS=4096
+    FORM_TEMPERATURE=0.1
+    MAX_PER_HOUR=3
+    REFINE_ENABLED=true
+    REFINE_ATTEMPTS=3
+    REFINE_MODEL="mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"
+fi
+
+# Determine formalization model based on backend
+case "$FORM_BACKEND" in
+    anthropic) ACTIVE_MODEL="$FORM_ANTHROPIC_MODEL"; BACKEND_FLAG="--backend anthropic" ;;
+    openai)    ACTIVE_MODEL="$FORM_OPENAI_MODEL"; BACKEND_FLAG="--backend openai" ;;
+    *)         ACTIVE_MODEL="$FORM_MODEL"; BACKEND_FLAG="" ;;
+esac
 
 # Colors
 RED='\033[0;31m'
@@ -36,9 +87,9 @@ warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_DIR/hourly-$DATE.log"
 }
 
-log "🌙 Starting Hourly Mathematics Automation Loop"
+log "Starting Hourly Mathematics Automation Loop"
 log "Date: $DATE, Hour: $HOUR"
-log "Project: $PROJECT_DIR"
+log "Backend: $FORM_BACKEND | Model: $ACTIVE_MODEL | Max/hour: $MAX_PER_HOUR"
 echo ""
 
 # Create timestamped directories for this run
@@ -55,7 +106,7 @@ if [ -f "papers/papers-$DATE.json" ]; then
     PAPER_COUNT=$(jq '. | length' papers/papers-$DATE.json 2>/dev/null || echo "0")
     log "Using existing $PAPER_COUNT papers"
 else
-    python3 scripts/fetch-arxiv-papers.py --category math.NT --category math.CO --days 1 --output papers/papers-$DATE.json
+    python3 scripts/fetch-arxiv-papers.py $ARXIV_CATEGORIES --days $ARXIV_DAYS --max-results $ARXIV_MAX --output papers/papers-$DATE.json
     PAPER_COUNT=$(jq '. | length' papers/papers-$DATE.json 2>/dev/null || echo "0")
     log "Downloaded $PAPER_COUNT new papers"
 fi
@@ -72,23 +123,22 @@ else
     python3 scripts/extract-theorems.py \
         --input papers/papers-$DATE.json \
         --output target-theorems/candidates-$DATE.json \
-        --max-candidates 10 \
-        --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit
+        --max-candidates $EXTRACT_MAX \
+        --model "$EXTRACT_MODEL"
 fi
 
 CANDIDATES_FILE="target-theorems/candidates-$DATE.json"
 candidates=$(jq '.candidates | length' $CANDIDATES_FILE 2>/dev/null || echo "0")
 log "Total candidates available: $candidates"
 
-# Phase 3: Formalization Attempts (process 1-2 candidates per hour)
+# Phase 3: Formalization Attempts
 log ""
 log "═══════════════════════════════════════════════════"
-log "PHASE 3: Hourly Formalization (1-2 candidates)"
+log "PHASE 3: Hourly Formalization ($MAX_PER_HOUR candidates max)"
 log "═══════════════════════════════════════════════════"
 
-# Track counts (use process substitution to avoid subshell variable scope)
 processed_count=0
-max_per_hour=2
+max_per_hour=$MAX_PER_HOUR
 
 while read -r candidate; do
     theorem_id=$(echo "$candidate" | jq -r '.id')
@@ -106,15 +156,17 @@ while read -r candidate; do
 
     log "Processing: $theorem_name ($theorem_id)"
 
-    # Generate Lean formalization with v2 script
+    # Generate Lean formalization
     python3 scripts/llm-formalize-v2.py \
         --candidate "$candidate" \
         --output "$RUN_DIR/${theorem_id}.lean" \
-        --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit \
-        --attempts 2
+        --model "$ACTIVE_MODEL" \
+        --attempts $FORM_ATTEMPTS \
+        --max-tokens $FORM_MAX_TOKENS \
+        --temperature $FORM_TEMPERATURE \
+        $BACKEND_FLAG
 
     if [ -f "$RUN_DIR/${theorem_id}.lean" ]; then
-        # Verify with Lean (individual file check)
         log "Verifying $theorem_id with Lean..."
 
         VERIFY_EXIT=0
@@ -148,19 +200,19 @@ while read -r candidate; do
     fi
 done < <(jq -c '.candidates[]' $CANDIDATES_FILE 2>/dev/null)
 
-# Phase 3.5: Refinement Pass (retry failed/formalized proofs)
+# Phase 3.5: Refinement Pass
 log ""
 log "═══════════════════════════════════════════════════"
 log "PHASE 3.5: Refinement Pass"
 log "═══════════════════════════════════════════════════"
 
-if [ -d "$RUN_DIR" ] && ls "$RUN_DIR"/*.lean 1>/dev/null 2>&1; then
+if [ "$REFINE_ENABLED" = "true" ] && [ -d "$RUN_DIR" ] && ls "$RUN_DIR"/*.lean 1>/dev/null 2>&1; then
     python3 scripts/refine-failed-proofs.py \
         --proofs-dir "$RUN_DIR" \
-        --max-attempts 2 \
-        --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit 2>&1 | tee -a "$LOG_DIR/hourly-$DATE.log"
+        --max-attempts $REFINE_ATTEMPTS \
+        --model "$REFINE_MODEL" 2>&1 | tee -a "$LOG_DIR/hourly-$DATE.log"
 else
-    log "No proof files to refine"
+    log "No proof files to refine (or refinement disabled)"
 fi
 
 # Phase 4: Update Dashboard
@@ -169,8 +221,8 @@ log "═════════════════════════
 log "PHASE 4: Update Dashboard"
 log "═══════════════════════════════════════════════════"
 
-# Generate simple hourly report
 REPORT_FILE="daily-reports/hourly-$TIMESTAMP.md"
+mkdir -p daily-reports
 cat > "$REPORT_FILE" << EOF
 # Hourly Report — $DATE $HOUR
 
@@ -178,18 +230,16 @@ cat > "$REPORT_FILE" << EOF
 - **Papers**: $PAPER_COUNT available
 - **Candidates**: $candidates total
 - **Processed this hour**: $processed_count
+- **Backend**: $FORM_BACKEND ($ACTIVE_MODEL)
 - **Run directory**: \`$RUN_DIR\`
 
 ## Files Generated
 \`\`\`
 $(ls -1 $RUN_DIR/ 2>/dev/null || echo "none")
 \`\`\`
-
-## Next Run
-Next hourly batch in 60 minutes.
 EOF
 
-success "✓ Hourly report: $REPORT_FILE"
+success "Hourly report: $REPORT_FILE"
 
 # Count each status for dashboard
 proven_today=$(cat completed-proofs/proven-$DATE.jsonl 2>/dev/null | python3 -c "import sys,json; d=json.JSONDecoder(); c=sys.stdin.read(); i=0; n=0
@@ -203,7 +253,6 @@ while i<len(c.strip()):
  except: break
 print(n)" 2>/dev/null || echo "0")
 
-# Update dashboard data
 DASHBOARD_DATA="dashboard/data/latest.json"
 mkdir -p "dashboard/data"
 cat > "$DASHBOARD_DATA" << EOF
@@ -222,7 +271,7 @@ EOF
 
 # Generate proof listing for dashboard
 python3 -c "
-import json, os, glob, subprocess, re
+import json, os, glob, re
 
 proofs = []
 proof_dir = 'proofs/$DATE'
@@ -231,7 +280,6 @@ if os.path.isdir(proof_dir):
         name = os.path.basename(lean_file).replace('.lean', '')
         abs_path = os.path.abspath(lean_file)
 
-        # Determine status from content
         with open(lean_file, 'r') as f:
             content = f.read()
 
@@ -242,7 +290,7 @@ if os.path.isdir(proof_dir):
         elif 'sorry' in content:
             status = 'formalized'
         else:
-            status = 'unknown'  # Will be updated by verification
+            status = 'unknown'
 
         proofs.append({
             'id': name,
@@ -257,14 +305,13 @@ print(f'Generated dashboard proof listing: {len(proofs)} proofs')
 " 2>&1 | tee -a "$LOG_DIR/hourly-$DATE.log"
 
 log ""
-success "🎉 Hourly automation complete!"
-log "Next run: $(date -v+1H '+%H:%M')"
+success "Hourly automation complete!"
 log "Dashboard: http://localhost:8765"
 
 # Auto-commit to git
 cd "$PROJECT_DIR"
 if [ -d .git ]; then
-    git add proofs/ daily-reports/ completed-proofs/ failed-attempts/ dashboard/data/ 2>/dev/null
+    git add proofs/ daily-reports/ completed-proofs/ failed-attempts/ dashboard/data/ config.json 2>/dev/null
     git diff --cached --quiet || git commit -m "auto: $(date '+%H:%M') - $processed_count processed (proven:$proven_today formalized:$formalized_today)"
     git push origin main 2>/dev/null || warning "Git push failed (no network?)"
 fi

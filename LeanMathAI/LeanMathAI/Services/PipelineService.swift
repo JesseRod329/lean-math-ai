@@ -68,11 +68,41 @@ final class PipelineService {
     var provenCount: Int = 0
     var formalizedCount: Int = 0
 
+    // Auto-run
+    var nextRunDate: Date?
+    private var autoRunTimer: Timer?
+
     private var currentProcess: Process?
     private var baseDirectory: URL?
+    private var configService: ConfigService?
 
-    func configure(baseDirectory: URL) {
+    func configure(baseDirectory: URL, configService: ConfigService? = nil) {
         self.baseDirectory = baseDirectory
+        self.configService = configService
+    }
+
+    // MARK: - Auto-Run Timer
+
+    func startAutoRunTimer() {
+        stopAutoRunTimer()
+        guard let config = configService?.config, config.schedule.autoRun else { return }
+
+        let interval = TimeInterval(config.schedule.runIntervalMinutes * 60)
+        nextRunDate = Date().addingTimeInterval(interval)
+
+        autoRunTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                guard let self, !self.isRunning else { return }
+                self.runFullPipeline()
+                self.nextRunDate = Date().addingTimeInterval(interval)
+            }
+        }
+    }
+
+    func stopAutoRunTimer() {
+        autoRunTimer?.invalidate()
+        autoRunTimer = nil
+        nextRunDate = nil
     }
 
     // MARK: - Run Full Pipeline
@@ -85,12 +115,13 @@ final class PipelineService {
         resetCounts()
 
         let scriptPath = baseDir.appendingPathComponent("scripts/hourly-math-loop.sh").path
+        let configPath = baseDir.appendingPathComponent("config.json").path
 
         appendLog("Starting full pipeline run...")
         phase = .fetchingPapers
 
         Task.detached { [weak self] in
-            await self?.executeScript(at: scriptPath, in: baseDir)
+            await self?.executeScript(at: scriptPath, in: baseDir, configPath: configPath)
         }
     }
 
@@ -98,6 +129,7 @@ final class PipelineService {
 
     func fetchPapers() {
         guard !isRunning, let baseDir = baseDirectory else { return }
+        let config = configService?.config ?? .default
         isRunning = true
         errorMessage = nil
         logOutput = []
@@ -108,10 +140,16 @@ final class PipelineService {
         let script = baseDir.appendingPathComponent("scripts/fetch-arxiv-papers.py").path
         let output = baseDir.appendingPathComponent("papers/papers-\(date).json").path
 
+        var args: [String] = []
+        for cat in config.arxiv.categories {
+            args += ["--category", cat]
+        }
+        args += ["--days", "\(config.arxiv.daysBack)", "--max-results", "\(config.arxiv.maxResults)", "--output", output]
+
         Task.detached { [weak self] in
             await self?.executePython(
                 script: script,
-                args: ["--category", "math.NT", "--category", "math.CO", "--days", "1", "--output", output],
+                args: args,
                 in: baseDir,
                 nextPhase: .idle
             )
@@ -120,6 +158,7 @@ final class PipelineService {
 
     func extractTheorems() {
         guard !isRunning, let baseDir = baseDirectory else { return }
+        let config = configService?.config ?? .default
         isRunning = true
         errorMessage = nil
         logOutput = []
@@ -137,8 +176,8 @@ final class PipelineService {
                 args: [
                     "--input", input,
                     "--output", output,
-                    "--max-candidates", "10",
-                    "--model", "mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit"
+                    "--max-candidates", "\(config.extraction.maxCandidates)",
+                    "--model", config.extraction.model
                 ],
                 in: baseDir,
                 nextPhase: .idle
@@ -156,15 +195,34 @@ final class PipelineService {
 
     // MARK: - Execution
 
-    private func executeScript(at path: String, in workDir: URL) async {
+    private func executeScript(at path: String, in workDir: URL, configPath: String? = nil) async {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/bash")
         process.arguments = [path]
         process.currentDirectoryURL = workDir
-        process.environment = ProcessInfo.processInfo.environment.merging([
+
+        var env = ProcessInfo.processInfo.environment.merging([
             "PATH": "\(NSHomeDirectory())/.elan/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin",
             "HOME": NSHomeDirectory()
         ]) { _, new in new }
+
+        // Source API keys file if it exists
+        if let configPath {
+            env["PIPELINE_CONFIG"] = configPath
+        }
+        let keysFile = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".lean-math-ai-keys")
+        if let keysContent = try? String(contentsOf: keysFile) {
+            for line in keysContent.components(separatedBy: "\n") {
+                let stripped = line.trimmingCharacters(in: .whitespaces)
+                if stripped.hasPrefix("export "), let eqRange = stripped.range(of: "=") {
+                    let key = String(stripped[stripped.index(stripped.startIndex, offsetBy: 7)..<eqRange.lowerBound])
+                    var value = String(stripped[eqRange.upperBound...])
+                    value = value.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                    env[key] = value
+                }
+            }
+        }
+        process.environment = env
 
         let pipe = Pipe()
         process.standardOutput = pipe
@@ -177,7 +235,6 @@ final class PipelineService {
         do {
             try process.run()
 
-            // Read output line by line
             let handle = pipe.fileHandleForReading
             Task.detached { [weak self] in
                 while true {
@@ -226,10 +283,26 @@ final class PipelineService {
         process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/python3")
         process.arguments = [script] + args
         process.currentDirectoryURL = workDir
-        process.environment = ProcessInfo.processInfo.environment.merging([
+
+        var env = ProcessInfo.processInfo.environment.merging([
             "PATH": "\(NSHomeDirectory())/.elan/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin",
             "HOME": NSHomeDirectory()
         ]) { _, new in new }
+
+        // Source API keys
+        let keysFile = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".lean-math-ai-keys")
+        if let keysContent = try? String(contentsOf: keysFile) {
+            for line in keysContent.components(separatedBy: "\n") {
+                let stripped = line.trimmingCharacters(in: .whitespaces)
+                if stripped.hasPrefix("export "), let eqRange = stripped.range(of: "=") {
+                    let key = String(stripped[stripped.index(stripped.startIndex, offsetBy: 7)..<eqRange.lowerBound])
+                    var value = String(stripped[eqRange.upperBound...])
+                    value = value.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                    env[key] = value
+                }
+            }
+        }
+        process.environment = env
 
         let pipe = Pipe()
         process.standardOutput = pipe
@@ -314,7 +387,6 @@ final class PipelineService {
     @MainActor
     private func appendLog(_ line: String) {
         logOutput.append(line)
-        // Keep log bounded
         if logOutput.count > 500 {
             logOutput.removeFirst(logOutput.count - 500)
         }
