@@ -76,5 +76,41 @@
     "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v2.lean",
     "status": "unknown",
     "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_135951/2602.20143v1_An_isoperimetric_inequality_for_word_ove_1_v2.lean"
+  },
+  {
+    "id": "2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0.lean"
+  },
+  {
+    "id": "2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0_v1.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0_v1.lean"
+  },
+  {
+    "id": "2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0_v2.lean",
+    "status": "formalized",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20109v1_On_the_Ramanujan_Vector_Field_modulo__p__0_v2.lean"
+  },
+  {
+    "id": "2602.20136v1_On_a_discrete_max_plus_transportation_pr_1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20136v1_On_a_discrete_max_plus_transportation_pr_1.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20136v1_On_a_discrete_max_plus_transportation_pr_1.lean"
+  },
+  {
+    "id": "2602.20136v1_On_a_discrete_max_plus_transportation_pr_1_v1",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20136v1_On_a_discrete_max_plus_transportation_pr_1_v1.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20136v1_On_a_discrete_max_plus_transportation_pr_1_v1.lean"
+  },
+  {
+    "id": "2602.20136v1_On_a_discrete_max_plus_transportation_pr_1_v2",
+    "path": "/Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20136v1_On_a_discrete_max_plus_transportation_pr_1_v2.lean",
+    "status": "unknown",
+    "vscode_url": "vscode://file//Users/jesse/clawd/lean-math-ai/proofs/2026-02-24/20260224_140853/2602.20136v1_On_a_discrete_max_plus_transportation_pr_1_v2.lean"
   }
 ]
