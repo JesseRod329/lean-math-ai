@@ -117,8 +117,8 @@ while read -r candidate; do
         # Verify with Lean (individual file check)
         log "Verifying $theorem_id with Lean..."
 
-        VERIFY_OUTPUT=$(bash scripts/verify-proof.sh "$RUN_DIR/${theorem_id}.lean" 2>&1)
-        VERIFY_EXIT=$?
+        VERIFY_EXIT=0
+        VERIFY_OUTPUT=$(bash scripts/verify-proof.sh "$RUN_DIR/${theorem_id}.lean" 2>&1) || VERIFY_EXIT=$?
 
         case $VERIFY_EXIT in
             0)
