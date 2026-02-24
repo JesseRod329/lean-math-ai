@@ -25,7 +25,8 @@ struct DashboardView: View {
                         papers: viewModel.pipelinePapers,
                         candidates: viewModel.pipelineCandidates,
                         processed: viewModel.pipelineProcessed,
-                        proven: viewModel.pipelineProven
+                        proven: viewModel.pipelineProven,
+                        formalized: viewModel.totalFormalized
                     )
                 }
 

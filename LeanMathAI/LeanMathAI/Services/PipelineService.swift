@@ -233,25 +233,32 @@ final class PipelineService {
         }
 
         do {
-            try process.run()
-
             let handle = pipe.fileHandleForReading
-            Task.detached { [weak self] in
-                while true {
-                    let data = handle.availableData
-                    if data.isEmpty { break }
-                    if let line = String(data: data, encoding: .utf8) {
-                        let lines = line.split(separator: "\n", omittingEmptySubsequences: false)
-                        for l in lines where !l.isEmpty {
-                            let cleaned = Self.stripAnsi(String(l))
-                            await self?.appendLog(cleaned)
-                            await self?.parsePhaseFromLog(cleaned)
-                        }
+            handle.readabilityHandler = { [weak self] fileHandle in
+                let data = fileHandle.availableData
+                guard !data.isEmpty, let text = String(data: data, encoding: .utf8) else {
+                    fileHandle.readabilityHandler = nil
+                    return
+                }
+                let lines = text.split(separator: "\n", omittingEmptySubsequences: false)
+                for l in lines where !l.isEmpty {
+                    let cleaned = Self.stripAnsi(String(l))
+                    Task { @MainActor [weak self] in
+                        self?.appendLog(cleaned)
+                    }
+                    Task { [weak self] in
+                        await self?.parsePhaseFromLog(cleaned)
                     }
                 }
             }
 
-            process.waitUntilExit()
+            try process.run()
+
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                process.terminationHandler = { _ in
+                    continuation.resume()
+                }
+            }
 
             let status = process.terminationStatus
             await MainActor.run {
@@ -262,6 +269,11 @@ final class PipelineService {
                 if status == 0 {
                     self.phase = .complete
                     self.appendLog("Pipeline completed successfully.")
+                    NotificationService.shared.notifyPipelineComplete(
+                        proven: self.provenCount,
+                        formalized: self.formalizedCount,
+                        failed: self.processedCount - self.provenCount - self.formalizedCount
+                    )
                 } else {
                     self.phase = .failed
                     self.errorMessage = "Pipeline exited with code \(status)"
@@ -280,8 +292,8 @@ final class PipelineService {
 
     private func executePython(script: String, args: [String], in workDir: URL, nextPhase: PipelinePhase) async {
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/python3")
-        process.arguments = [script] + args
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["python3", script] + args
         process.currentDirectoryURL = workDir
 
         var env = ProcessInfo.processInfo.environment.merging([
@@ -313,22 +325,29 @@ final class PipelineService {
         }
 
         do {
-            try process.run()
-
             let handle = pipe.fileHandleForReading
-            Task.detached { [weak self] in
-                while true {
-                    let data = handle.availableData
-                    if data.isEmpty { break }
-                    if let line = String(data: data, encoding: .utf8) {
-                        for l in line.split(separator: "\n", omittingEmptySubsequences: false) where !l.isEmpty {
-                            await self?.appendLog(Self.stripAnsi(String(l)))
-                        }
+            handle.readabilityHandler = { [weak self] fileHandle in
+                let data = fileHandle.availableData
+                guard !data.isEmpty, let text = String(data: data, encoding: .utf8) else {
+                    fileHandle.readabilityHandler = nil
+                    return
+                }
+                for l in text.split(separator: "\n", omittingEmptySubsequences: false) where !l.isEmpty {
+                    let cleaned = Self.stripAnsi(String(l))
+                    Task { @MainActor [weak self] in
+                        self?.appendLog(cleaned)
                     }
                 }
             }
 
-            process.waitUntilExit()
+            try process.run()
+
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                process.terminationHandler = { _ in
+                    continuation.resume()
+                }
+            }
+
             let status = process.terminationStatus
 
             await MainActor.run {
@@ -365,7 +384,12 @@ final class PipelineService {
             else if line.contains("PHASE 3.5") { self.phase = .refiningProofs }
             else if line.contains("PHASE 4") { self.phase = .updatingDashboard }
 
-            if line.contains("PROVEN:") { self.provenCount += 1; self.processedCount += 1 }
+            if line.contains("PROVEN:") {
+                self.provenCount += 1; self.processedCount += 1
+                // Find theorem name from log line
+                let theoremName = line.components(separatedBy: "PROVEN:").last?.trimmingCharacters(in: .whitespaces) ?? "Unknown"
+                NotificationService.shared.notifyProofResult(name: theoremName, status: "proven", paperTitle: "")
+            }
             else if line.contains("FORMALIZED:") { self.formalizedCount += 1; self.processedCount += 1 }
             else if line.contains("FAILED:") { self.processedCount += 1 }
             else if line.contains("TEMPLATE:") { self.processedCount += 1 }
@@ -389,6 +413,23 @@ final class PipelineService {
         logOutput.append(line)
         if logOutput.count > 500 {
             logOutput.removeFirst(logOutput.count - 500)
+        }
+    }
+
+    func clearLog() {
+        logOutput = []
+    }
+
+    var progressFraction: Double {
+        switch phase {
+        case .idle: return 0
+        case .fetchingPapers: return 0.15
+        case .extractingTheorems: return 0.35
+        case .formalizingProofs: return 0.55
+        case .refiningProofs: return 0.75
+        case .updatingDashboard: return 0.9
+        case .complete: return 1.0
+        case .failed: return 0
         }
     }
 

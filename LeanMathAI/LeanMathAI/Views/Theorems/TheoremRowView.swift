@@ -4,6 +4,7 @@ struct TheoremRowView: View {
     let candidate: TheoremCandidate
     let status: ProofStatus?
     @State private var isExpanded = false
+    @State private var isHovering = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -25,6 +26,9 @@ struct TheoremRowView: View {
                 if let status {
                     ProofStatusBadge(status: status)
                 }
+                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    .font(.caption2)
+                    .foregroundStyle(AppTheme.textSecondary)
             }
 
             // Statement preview
@@ -106,10 +110,28 @@ struct TheoremRowView: View {
                                 .foregroundStyle(method == "llm" ? AppTheme.proven : AppTheme.formalized)
                         }
                     }
+
+                    // LaTeX rendered statement
+                    if candidate.hasLaTeX {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Rendered Statement")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(AppTheme.textAccent)
+                            LaTeXView(latex: candidate.statement, fontSize: 14)
+                                .frame(height: 80)
+                        }
+                    }
                 }
             }
         }
         .padding(.vertical, 6)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isHovering ? Color.white.opacity(0.04) : Color.clear)
+        )
+        .onHover { isHovering = $0 }
+        .animation(.easeOut(duration: 0.15), value: isHovering)
         .contentShape(Rectangle())
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.2)) {

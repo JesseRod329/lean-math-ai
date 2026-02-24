@@ -29,5 +29,16 @@ struct StatusIndicatorView: View {
                 }
             }
         }
+        .onChange(of: isActive) { _, newValue in
+            if newValue {
+                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                    isPulsing = true
+                }
+            } else {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isPulsing = false
+                }
+            }
+        }
     }
 }

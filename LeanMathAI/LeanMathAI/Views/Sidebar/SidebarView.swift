@@ -42,17 +42,72 @@ enum SidebarItem: String, CaseIterable, Identifiable {
         case .settings: "6"
         }
     }
+
+    /// Navigation items (excludes settings)
+    static var navigationItems: [SidebarItem] {
+        [.dashboard, .papers, .theorems, .proofs, .timeline]
+    }
 }
 
 struct SidebarView: View {
     @Binding var selection: SidebarItem
+    var proofCount: Int = 0
+    var paperCount: Int = 0
+    var provenCount: Int = 0
+    var isRunning: Bool = false
 
     var body: some View {
-        List(SidebarItem.allCases, selection: $selection) { item in
-            Label(item.label, systemImage: item.icon)
-                .tag(item)
+        List(selection: $selection) {
+            Section {
+                ForEach(SidebarItem.navigationItems) { item in
+                    HStack {
+                        Label(item.label, systemImage: item.icon)
+                        Spacer()
+                        badgeFor(item)
+                    }
+                    .tag(item)
+                }
+            }
+
+            Section {
+                Label(SidebarItem.settings.label, systemImage: SidebarItem.settings.icon)
+                    .tag(SidebarItem.settings)
+            }
         }
         .listStyle(.sidebar)
-        .frame(minWidth: 180)
+        .frame(minWidth: 200)
+    }
+
+    @ViewBuilder
+    private func badgeFor(_ item: SidebarItem) -> some View {
+        switch item {
+        case .dashboard:
+            if isRunning {
+                Circle()
+                    .fill(AppTheme.proven)
+                    .frame(width: 8, height: 8)
+                    .shadow(color: AppTheme.proven.opacity(0.5), radius: 4)
+            }
+        case .proofs:
+            if proofCount > 0 {
+                badgePill("\(proofCount)", color: provenCount > 0 ? AppTheme.proven : AppTheme.formalized)
+            }
+        case .papers:
+            if paperCount > 0 {
+                badgePill("\(paperCount)", color: AppTheme.textAccent)
+            }
+        default:
+            EmptyView()
+        }
+    }
+
+    private func badgePill(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(.caption2.weight(.semibold).monospacedDigit())
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(color.opacity(0.2))
+            .foregroundStyle(color)
+            .clipShape(Capsule())
     }
 }

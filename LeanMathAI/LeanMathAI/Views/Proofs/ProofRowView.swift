@@ -2,7 +2,9 @@ import SwiftUI
 
 struct ProofRowView: View {
     let result: ProofResult
+    var leanSource: String? = nil
     @State private var isExpanded = false
+    @State private var isHovering = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -33,6 +35,9 @@ struct ProofRowView: View {
 
                 DifficultyBadge(difficulty: result.difficulty)
                 ProofStatusBadge(status: result.status)
+                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    .font(.caption2)
+                    .foregroundStyle(AppTheme.textSecondary)
             }
 
             // Statement preview
@@ -95,9 +100,42 @@ struct ProofRowView: View {
                         .foregroundStyle(AppTheme.textAccent)
                     }
                 }
+
+                // Lean 4 source code
+                if let source = leanSource, !source.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text("Lean 4 Code")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(AppTheme.textAccent)
+                            Spacer()
+                            Button {
+                                NSPasteboard.general.clearContents()
+                                NSPasteboard.general.setString(source, forType: .string)
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "doc.on.doc")
+                                    Text("Copy")
+                                }
+                                .font(.caption2)
+                                .foregroundStyle(AppTheme.textAccent)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        LeanCodeView(source: source)
+                            .frame(maxHeight: 300)
+                    }
+                }
             }
         }
         .padding(.vertical, 6)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isHovering ? Color.white.opacity(0.04) : Color.clear)
+        )
+        .onHover { isHovering = $0 }
+        .animation(.easeOut(duration: 0.15), value: isHovering)
         .contentShape(Rectangle())
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.2)) {

@@ -40,6 +40,14 @@ struct PipelineControlView: View {
                 }
             }
 
+            // Progress bar
+            if pipeline.isRunning {
+                ProgressView(value: pipeline.progressFraction)
+                    .progressViewStyle(.linear)
+                    .tint(pipeline.phase.color)
+                    .animation(.easeInOut(duration: 0.3), value: pipeline.progressFraction)
+            }
+
             // Error message
             if let error = pipeline.errorMessage {
                 HStack(spacing: 8) {
@@ -133,7 +141,7 @@ struct PipelineControlView: View {
                     .foregroundStyle(AppTheme.textSecondary)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.05))
+                    .background(AppTheme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
@@ -165,6 +173,35 @@ struct PipelineControlView: View {
     }
 
     private var logView: some View {
+        VStack(alignment: .leading, spacing: 6) {
+        HStack {
+            Text("Pipeline Log")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(AppTheme.textSecondary)
+            Spacer()
+            Button {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(pipeline.logOutput.joined(separator: "\n"), forType: .string)
+            } label: {
+                HStack(spacing: 3) {
+                    Image(systemName: "doc.on.doc")
+                    Text("Copy")
+                }
+                .font(.caption2)
+                .foregroundStyle(AppTheme.textAccent)
+            }
+            .buttonStyle(.plain)
+
+            Button { pipeline.clearLog() } label: {
+                HStack(spacing: 3) {
+                    Image(systemName: "trash")
+                    Text("Clear")
+                }
+                .font(.caption2)
+                .foregroundStyle(AppTheme.textSecondary)
+            }
+            .buttonStyle(.plain)
+        }
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 2) {
@@ -190,6 +227,7 @@ struct PipelineControlView: View {
                 }
             }
         }
+        } // VStack
     }
 
     private func logColor(for line: String) -> Color {

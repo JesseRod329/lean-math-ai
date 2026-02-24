@@ -14,10 +14,17 @@ struct MainView: View {
     @State private var timelineVM = TimelineViewModel()
     @State private var settingsVM = SettingsViewModel()
     @State private var pipelineService = PipelineService()
+    @State private var refreshTask: Task<Void, Never>?
 
     var body: some View {
         NavigationSplitView {
-            SidebarView(selection: $selectedItem)
+            SidebarView(
+                selection: $selectedItem,
+                proofCount: dashboardVM.totalFormalized + dashboardVM.totalProven,
+                paperCount: dashboardVM.pipelinePapers,
+                provenCount: dashboardVM.totalProven,
+                isRunning: pipelineService.isRunning
+            )
         } detail: {
             ZStack {
                 GradientBackground()
@@ -27,6 +34,11 @@ struct MainView: View {
         .navigationSplitViewStyle(.balanced)
         .onAppear(perform: initialLoad)
         .onAppear(perform: setupFileWatcher)
+        .onReceive(NotificationCenter.default.publisher(for: .navigateTo)) { notification in
+            if let item = notification.object as? SidebarItem {
+                selectedItem = item
+            }
+        }
     }
 
     @ViewBuilder
@@ -57,6 +69,9 @@ struct MainView: View {
         if let baseDir = directoryService.baseDirectory {
             configService.configure(baseDirectory: baseDir)
             pipelineService.configure(baseDirectory: baseDir, configService: configService)
+            if configService.config.schedule.autoRun {
+                pipelineService.startAutoRunTimer()
+            }
         }
     }
 
@@ -72,16 +87,17 @@ struct MainView: View {
             fileWatcher.watch(directory: dashboardDir)
         }
 
-        fileWatcher.onChange = { [self] in
-            // Debounced refresh
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.directoryService.scanAvailableDates()
-                self.dashboardVM.refresh(from: self.directoryService)
-                self.timelineVM.refresh(from: self.directoryService)
-                // Reload current date for detail views
-                self.papersVM.loadCurrentDate()
-                self.theoremsVM.loadCurrentDate()
-                self.proofsVM.loadCurrentDate()
+        fileWatcher.onChange = {
+            refreshTask?.cancel()
+            refreshTask = Task { @MainActor in
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { return }
+                directoryService.scanAvailableDates()
+                dashboardVM.refresh(from: directoryService)
+                timelineVM.refresh(from: directoryService)
+                papersVM.loadCurrentDate()
+                theoremsVM.loadCurrentDate()
+                proofsVM.loadCurrentDate()
             }
         }
     }

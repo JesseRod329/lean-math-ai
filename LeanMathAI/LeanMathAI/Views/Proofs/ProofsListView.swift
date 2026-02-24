@@ -16,7 +16,7 @@ struct ProofsListView: View {
                 )
             } else {
                 List(viewModel.filteredResults) { result in
-                    ProofRowView(result: result)
+                    ProofRowView(result: result, leanSource: viewModel.leanSource(for: result))
                         .listRowBackground(Color.clear)
                         .listRowSeparatorTint(AppTheme.cardBorder)
                 }

@@ -175,23 +175,23 @@ while read -r candidate; do
         case $VERIFY_EXIT in
             0)
                 success "PROVEN: $theorem_name"
-                echo "$candidate" | jq '. + {"status": "proven", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> completed-proofs/proven-$DATE.jsonl
+                echo "$candidate" | jq -c '. + {"status": "proven", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> completed-proofs/proven-$DATE.jsonl
                 ;;
             1)
                 success "FORMALIZED: $theorem_name (compiles with sorry)"
-                echo "$candidate" | jq '. + {"status": "formalized", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> completed-proofs/formalized-$DATE.jsonl
+                echo "$candidate" | jq -c '. + {"status": "formalized", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> completed-proofs/formalized-$DATE.jsonl
                 ;;
             2)
                 error "FAILED: $theorem_name (does not compile)"
-                echo "$candidate" | jq '. + {"status": "failed", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/failed-$DATE.jsonl
+                echo "$candidate" | jq -c '. + {"status": "failed", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/failed-$DATE.jsonl
                 ;;
             4)
                 warning "TEMPLATE: $theorem_name (LLM fallback)"
-                echo "$candidate" | jq '. + {"status": "template", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/templates-$DATE.jsonl
+                echo "$candidate" | jq -c '. + {"status": "template", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/templates-$DATE.jsonl
                 ;;
             5)
                 warning "TRIVIAL: $theorem_name (True := by)"
-                echo "$candidate" | jq '. + {"status": "trivial", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/trivial-$DATE.jsonl
+                echo "$candidate" | jq -c '. + {"status": "trivial", "date": "'"$DATE"'", "hour": "'"$HOUR"'"}' >> failed-attempts/trivial-$DATE.jsonl
                 ;;
         esac
 
